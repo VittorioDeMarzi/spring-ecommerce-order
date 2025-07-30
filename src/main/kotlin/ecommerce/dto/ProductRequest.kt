@@ -1,5 +1,6 @@
 package ecommerce.dto
 
+import ecommerce.model.Product
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Positive
@@ -22,3 +23,11 @@ data class ProductRequest(
     )
     val imageUrl: String,
 )
+
+fun ProductRequest.toEntity(): Product {
+    return Product(
+        name = name,
+        price = price,
+        imageUrl = imageUrl,
+    )
+}
