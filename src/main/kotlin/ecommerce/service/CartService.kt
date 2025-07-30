@@ -34,19 +34,18 @@ class CartService(
     }
 
     fun getCartItems(memberId: Long): List<CartItemResponse> {
-        val cart = cartRepository.findCartByMemberId(memberId) ?: throw ElementNotFoundException("Cart Not Found")
-        return cartItemRepository.getCartItemsByCartId(cart.id)
+        val cart = cartJpaRepository.getByMemberId(memberId)
+        return cart.cartProducts.map { it.toDto() }
     }
 
     fun deleteProductFromCart(
         memberId: Long,
         productId: Long,
-    ): Boolean {
-        val cart = cartRepository.findCartByMemberId(memberId) ?: throw ElementNotFoundException("Cart Not Found")
-        return cartItemRepository.deleteCartItemsByCartIdAndProductId(
-            cart.id,
-            productId,
-        )
+    ) {
+        val cart = cartJpaRepository.getByMemberId(memberId)
+        val deleted = cart.deleteCartProduct(productId)
+        if (!deleted) throw ElementNotFoundException("Element not in the cart")
+        cartJpaRepository.save(cart)
     }
 
     fun updateCartItemQuantity(

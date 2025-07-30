@@ -44,10 +44,8 @@ class CartController(
         @PathVariable productId: Long,
         @LoginMember member: MemberDto,
     ): ResponseEntity<Void> {
-        return when (cartService.deleteProductFromCart(member.id, productId)) {
-            true -> ResponseEntity.noContent().build()
-            false -> ResponseEntity.notFound().build()
-        }
+        cartService.deleteProductFromCart(member.id, productId)
+        return ResponseEntity.noContent().build()
     }
 
     @PutMapping("/update/quantity")
