@@ -7,7 +7,6 @@ import ecommerce.dto.RegistrationRequest
 import ecommerce.dto.TokenResponse
 import ecommerce.exception.EmailOrPasswordIncorrectException
 import ecommerce.exception.MemberEmailAlreadyExistsException
-import ecommerce.model.Cart
 import ecommerce.model.Member
 import ecommerce.repository.MemberJpaRepository
 import org.springframework.stereotype.Service
@@ -32,7 +31,6 @@ class AuthenticationService(
                 password = hashedPassword,
                 role = "USER",
             )
-        member.cart = Cart(member = member)
         memberJpaRepository.save(member)
         val token = tokenService.createToken(request.email)
         return TokenResponse(token)
