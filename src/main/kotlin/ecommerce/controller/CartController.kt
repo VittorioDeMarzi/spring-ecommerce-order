@@ -25,11 +25,9 @@ class CartController(
     fun addToCart(
         @RequestBody request: CartItemRequest,
         @LoginMember member: MemberDto,
-    ): ResponseEntity<CartUpdateResult> {
-        cartService.addProduct(member.id, request)
-
-        val addToCartResult = cartService.addProductToCart(member.id, request.productId, request.quantity)
-
+    ): ResponseEntity<CartItemResponse> {
+        cartService.addCartItem(member.id, request)
+        val addToCartResult = cartService.addCartItem(member.id, request)
         return ResponseEntity.ok(addToCartResult)
     }
 
