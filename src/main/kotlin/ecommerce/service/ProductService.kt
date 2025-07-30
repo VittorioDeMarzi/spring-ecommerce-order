@@ -9,29 +9,29 @@ import ecommerce.exception.ProductCreationException
 import ecommerce.exception.ProductNotFoundException
 import ecommerce.exception.ProductUpdateException
 import ecommerce.model.toDto
-import ecommerce.repository.ProductRepository
+import ecommerce.repository.ProductJpaRepository
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrNull
 
 @Service
-class ProductService(private val productRepository: ProductRepository) {
+class ProductService(private val productJpaRepository: ProductJpaRepository) {
     fun findById(id: Long): ProductResponse {
         val product =
-            productRepository.findById(id).getOrNull() ?: throw ProductNotFoundException("Product not found, id: $id")
+            productJpaRepository.findById(id).getOrNull() ?: throw ProductNotFoundException("Product not found, id: $id")
         return product.toDto()
     }
 
     fun findAll(): List<ProductResponse> {
-        val products = productRepository.findAll()
+        val products = productJpaRepository.findAll()
         return products.map { it.toDto() }
     }
 
     fun createProduct(productRequest: ProductRequest): ProductResponse {
-        if (productRepository.existsByName(productRequest.name)) {
+        if (productJpaRepository.existsByName(productRequest.name)) {
             throw ProductAlreadyInDBException("Product already exists with name: ${productRequest.name}")
         }
         try {
-            return productRepository.save(productRequest.toEntity()).toDto()
+            return productJpaRepository.save(productRequest.toEntity()).toDto()
         } catch (e: Exception) {
             throw ProductCreationException("Failed to create product")
         }
@@ -42,7 +42,7 @@ class ProductService(private val productRepository: ProductRepository) {
         productRequest: ProductPatchRequest,
     ): ProductResponse {
         val product =
-            productRepository.findById(id).getOrNull() ?: throw ProductNotFoundException("Product not found, id: $id")
+            productJpaRepository.findById(id).getOrNull() ?: throw ProductNotFoundException("Product not found, id: $id")
         val newProduct =
             product.copy(
                 name = productRequest.name ?: product.name,
@@ -50,7 +50,7 @@ class ProductService(private val productRepository: ProductRepository) {
                 imageUrl = productRequest.imageUrl ?: product.imageUrl,
             )
         try {
-            productRepository.save(newProduct)
+            productJpaRepository.save(newProduct)
             return newProduct.toDto()
         } catch (e: Exception) {
             throw ProductUpdateException("Failed to update product, id: $id")
@@ -59,7 +59,7 @@ class ProductService(private val productRepository: ProductRepository) {
 
     fun deleteProduct(id: Long) {
         try {
-            val deleted = productRepository.deleteById(id)
+            val deleted = productJpaRepository.deleteById(id)
         } catch (e: Exception) {
             throw ProductNotFoundException("Product not found, id: $id")
         }
