@@ -1,43 +1,36 @@
 package ecommerce.service
 
+import ecommerce.dto.CartItemRequest
 import ecommerce.dto.CartItemResponse
-import ecommerce.dto.CartUpdateResult
 import ecommerce.exception.ElementNotFoundException
-import ecommerce.repository.AdminStatsRepository
+import ecommerce.model.CartItem
 import ecommerce.repository.CartItemRepository
+import ecommerce.repository.CartJpaRepository
 import ecommerce.repository.CartRepository
+import ecommerce.repository.ProductJpaRepository
+import ecommerce.repository.getByIdOrThrow
+import ecommerce.repository.getByMemberId
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
+@Transactional
 @Service
 class CartService(
     private val cartRepository: CartRepository,
     private val cartItemRepository: CartItemRepository,
-    private val adminStatsRepository: AdminStatsRepository,
+    private val cartJpaRepository: CartJpaRepository,
+    private val productJpaRepository: ProductJpaRepository,
 ) {
-    fun addProductToCart(
-        userId: Long,
-        productId: Long,
-        quantity: Int,
-    ): CartUpdateResult {
-        cartRepository.findCartByMemberId(userId) ?: cartRepository.createCart(userId)
-        val newCart = cartRepository.findCartByMemberId(userId)
-        val existingItem = cartItemRepository.findByCartIdAndProductId(newCart!!.id, productId)
-
-        when (existingItem) {
-            null -> {
-                cartItemRepository.addProductToCart(productId, newCart.id, quantity)
-                adminStatsRepository.addProductToStats(productId, newCart.id)
-                return CartUpdateResult.PRODUCT_ADDED
-            }
-            else -> {
-                cartItemRepository.updateQuantityByCartIdAndProductId(
-                    newCart.id,
-                    productId,
-                    existingItem.quantity + quantity,
-                )
-                return CartUpdateResult.PRODUCT_QUANTITY_UPDATED
-            }
-        }
+    fun addCartItem(
+        memberId: Long,
+        request: CartItemRequest,
+    ): CartItemResponse {
+        val product = productJpaRepository.getByIdOrThrow(request.productId)
+        val cart = cartJpaRepository.getByMemberId(memberId)
+        val cartItem = CartItem(cart, product, request.quantity)
+        cart.addOrUpdateCartItem(cartItem)
+        cartJpaRepository.save(cart)
+        return cartItem.toDto()
     }
 
     fun getCartItems(memberId: Long): List<CartItemResponse> {
