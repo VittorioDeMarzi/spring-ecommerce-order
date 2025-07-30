@@ -26,4 +26,8 @@ data class Cart(
             else -> presentProduct.quantity = cartItem.quantity
         }
     }
+
+    fun deleteCartProduct(productId: Long): Boolean {
+        return cartProducts.removeIf { it.product.id == productId }
+    }
 }
