@@ -5,7 +5,6 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.OneToOne
 
 @Entity
 class Member(
@@ -16,8 +15,6 @@ class Member(
     val email: String,
     val password: String,
     val role: String,
-    @OneToOne
-    var cart: Cart? = null,
 ) {
     fun toDto(): MemberDto {
         return MemberDto(id, email, role)
