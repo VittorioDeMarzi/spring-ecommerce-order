@@ -30,7 +30,7 @@ class AuthenticationController(private val authenticationService: Authentication
     fun registerMember(
         @Valid @RequestBody request: RegistrationRequest,
     ): ResponseEntity<TokenResponse> {
-        val token = authenticationService.registerMember(request)
+        val token = authenticationService.registration(request)
         return ResponseEntity.ok(token)
     }
 
