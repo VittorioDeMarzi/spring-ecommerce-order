@@ -16,9 +16,14 @@ data class Cart(
     @OneToOne
     val member: Member,
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "cart")
-    val cartProducts: List<CartItem> = listOf<CartItem>(),
+    val cartProducts: MutableList<CartItem> = mutableListOf<CartItem>(),
 ) {
-    fun addCartItem(cartItem: CartItem) {
-        cartProducts.toMutableList().add(cartItem)
+    fun addOrUpdateCartItem(cartItem: CartItem) {
+        val presentProduct =
+            cartProducts.firstOrNull { it.cart.id == cartItem.cart.id && it.product.id == cartItem.product.id }
+        when (presentProduct) {
+            null -> cartProducts.add(cartItem)
+            else -> presentProduct.quantity = cartItem.quantity
+        }
     }
 }
