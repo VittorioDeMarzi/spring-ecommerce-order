@@ -3,7 +3,6 @@ package ecommerce.controller
 import ecommerce.annotation.LoginMember
 import ecommerce.dto.CartItemRequest
 import ecommerce.dto.CartItemResponse
-import ecommerce.dto.CartUpdateResult
 import ecommerce.dto.MemberDto
 import ecommerce.service.CartService
 import org.springframework.http.ResponseEntity
@@ -26,8 +25,8 @@ class CartController(
         @RequestBody request: CartItemRequest,
         @LoginMember member: MemberDto,
     ): ResponseEntity<CartItemResponse> {
-        cartService.addCartItem(member.id, request)
-        val addToCartResult = cartService.addCartItem(member.id, request)
+        cartService.addOrUpdateCartItem(member.id, request)
+        val addToCartResult = cartService.addOrUpdateCartItem(member.id, request)
         return ResponseEntity.ok(addToCartResult)
     }
 
@@ -52,10 +51,9 @@ class CartController(
     fun updateCartItemQuantity(
         @RequestBody request: CartItemRequest,
         @LoginMember member: MemberDto,
-    ): ResponseEntity<CartUpdateResult> {
-        return when (cartService.updateCartItemQuantity(member.id, request.productId, request.quantity)) {
-            true -> ResponseEntity.noContent().build()
-            false -> ResponseEntity.notFound().build()
-        }
+    ): ResponseEntity<CartItemResponse?> {
+        cartService.addOrUpdateCartItem(member.id, request)
+        val addToCartResult = cartService.addOrUpdateCartItem(member.id, request)
+        return ResponseEntity.ok(addToCartResult)
     }
 }
