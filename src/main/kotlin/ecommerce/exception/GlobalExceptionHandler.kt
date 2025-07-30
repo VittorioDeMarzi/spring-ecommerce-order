@@ -33,6 +33,7 @@ class GlobalExceptionHandler {
             ProductCreationException::class,
             ProductUpdateException::class,
             ElementNotFoundException::class,
+            MemberNotFoundException::class,
         ],
     )
     fun handleUserNotFound(ex: RuntimeException): ResponseEntity<ErrorMessageModel> {
