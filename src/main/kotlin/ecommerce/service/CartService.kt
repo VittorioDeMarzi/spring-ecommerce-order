@@ -4,9 +4,7 @@ import ecommerce.dto.CartItemRequest
 import ecommerce.dto.CartItemResponse
 import ecommerce.exception.ElementNotFoundException
 import ecommerce.model.CartItem
-import ecommerce.repository.CartItemRepository
 import ecommerce.repository.CartJpaRepository
-import ecommerce.repository.CartRepository
 import ecommerce.repository.ProductJpaRepository
 import ecommerce.repository.getByIdOrThrow
 import ecommerce.repository.getByMemberId
@@ -16,8 +14,6 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 @Service
 class CartService(
-    private val cartRepository: CartRepository,
-    private val cartItemRepository: CartItemRepository,
     private val cartJpaRepository: CartJpaRepository,
     private val productJpaRepository: ProductJpaRepository,
 ) {
