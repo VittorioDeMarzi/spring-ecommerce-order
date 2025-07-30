@@ -1,5 +1,6 @@
 package ecommerce.model
 
+import ecommerce.dto.CartItemResponse
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -9,14 +10,24 @@ import jakarta.persistence.ManyToOne
 
 @Entity
 data class CartItem(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
     @ManyToOne
     @JoinColumn(name = "cart_id")
     var cart: Cart,
     @ManyToOne
     @JoinColumn(name = "product_id")
     val product: Product,
-    val quantity: Int,
-)
+    var quantity: Int,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0L,
+) {
+    fun toDto(): CartItemResponse {
+        return CartItemResponse(
+            product.id,
+            productName = product.name,
+            quantity = quantity,
+            productPrice = product.price,
+            productImageUrl = product.imageUrl,
+        )
+    }
+}
