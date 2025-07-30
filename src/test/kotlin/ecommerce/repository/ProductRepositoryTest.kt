@@ -9,12 +9,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 @DataJpaTest
 class ProductRepositoryTest {
     @Autowired
-    private lateinit var productRepository: ProductRepository
+    private lateinit var productJpaRepository: ProductJpaRepository
 
     @Test
     fun save() {
         val expected = Product(null, "test", 10.0, "https://google.com")
-        val actual = productRepository.save(expected)
+        val actual = productJpaRepository.save(expected)
         assertThat(actual.id).isNotNull
         assertThat(actual.id).isNotZero
         assertThat(actual.name).isEqualTo(expected.name)
@@ -24,25 +24,25 @@ class ProductRepositoryTest {
     fun findAll() {
         val expected = Product(null, "test", 10.0, "https://google.com")
         val expected2 = Product(null, "test2", 10.0, "https://google.com")
-        productRepository.save(expected)
-        productRepository.save(expected2)
-        val products = productRepository.findAll()
+        productJpaRepository.save(expected)
+        productJpaRepository.save(expected2)
+        val products = productJpaRepository.findAll()
         assertThat(products).hasSize(2)
     }
 
     @Test
     fun findFyId() {
         val expected = Product(null, "test", 10.0, "https://google.com")
-        productRepository.save(expected)
-        val product = productRepository.findById(1).get()
+        productJpaRepository.save(expected)
+        val product = productJpaRepository.findById(1).get()
         assertThat(product.name).isEqualTo("test")
     }
 
     @Test
     fun existByName() {
         val expected = Product(null, "test", 10.0, "https://google.com")
-        productRepository.save(expected)
-        val product = productRepository.existsByName("test")
+        productJpaRepository.save(expected)
+        val product = productJpaRepository.existsByName("test")
         assertThat(product).isTrue
     }
 }
