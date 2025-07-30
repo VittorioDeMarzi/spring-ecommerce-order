@@ -1,6 +1,5 @@
 package ecommerce.model
 
-import ecommerce.dto.MemberDto
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -8,18 +7,11 @@ import jakarta.persistence.Id
 import jakarta.persistence.OneToOne
 
 @Entity
-class Member(
+data class CartHistory(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
-    val name: String,
-    val email: String,
-    val password: String,
-    val role: String,
+    val id: Long,
     @OneToOne
-    var cart: Cart? = null,
-) {
-    fun toDto(): MemberDto {
-        return MemberDto(id, email, role)
-    }
-}
+    val cartProduct: CartItem,
+    val status: String,
+)
