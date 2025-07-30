@@ -13,7 +13,7 @@ class ProductsViewController(
 ) {
     @GetMapping
     fun getProducts(model: Model): String {
-        model.addAttribute("products", productRepository.getAll())
+        model.addAttribute("products", productRepository.findAll())
         return "index"
     }
 }
