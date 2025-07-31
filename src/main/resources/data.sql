@@ -31,15 +31,15 @@ VALUES (1),
        (4);
 
 INSERT INTO CART_ITEM (CART_ID, PRODUCT_ID, QUANTITY, CREATED_AT)
-VALUES (2, 7, 3, '2025-07-14 15:00:34'),
-       (2, 8, 2, '2025-07-19 15:00:34'),
-       (3, 8, 2, '2025-06-25 15:00:34'),
-       (3, 2, 1, '2025-06-30 15:00:34');
+VALUES (2, 7, 3, NOW()),
+       (2, 8, 2, NOW()),
+       (3, 8, 2, NOW()),
+       (3, 2, 1, NOW());
 
 INSERT INTO CART_HISTORY (CART_PRODUCT_ID, STATUS, CREATED_AT)
-VALUES (1, 'ADDED', '2025-07-24 15:00:34'),
-       (2, 'ADDED', '2025-07-19 15:00:34'),
-       (3, 'ADDED', '2025-07-25 15:00:34'),
-       (4, 'ADDED', '2025-07-23 15:00:34');
+VALUES (1, 'ADDED', NOW()),
+       (2, 'ADDED', NOW()),
+       (3, 'ADDED', NOW()),
+       (4, 'ADDED', NOW());
 
 

@@ -3,52 +3,20 @@ package ecommerce.endToEnd
 import ecommerce.dto.LoginRequest
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
+import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.test.annotation.DirtiesContext
 
+@Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AdminStatsControllerTest {
     lateinit var token: String
 
-    @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
-
     @BeforeEach
     fun setUp() {
-        jdbcTemplate.execute("DELETE FROM CART_HISTORY")
-        jdbcTemplate.execute("DELETE FROM CART_ITEMS")
-
-        jdbcTemplate.execute("DELETE FROM PRODUCTS")
-        jdbcTemplate.update(
-            """
-            INSERT INTO PRODUCTS (id, name, price, image_url)
-            VALUES (1, 'test1', 2.50, 'https://test1.JPG'),
-                   (2, 'test2', 3.20, 'https://test2.jpg')
-            """.trimIndent(),
-        )
-        jdbcTemplate.execute(
-            """
-            INSERT INTO CART_ITEMS (CART_ID, PRODUCT_ID, QUANTITY, CREATED_AT)
-            VALUES (1, 1, 3, '2025-07-27 15:00:34'),
-                   (2, 2, 3, '2025-07-10 15:00:34')
-            """.trimIndent(),
-        )
-
-        jdbcTemplate.execute(
-            """
-            INSERT INTO CART_HISTORY (CART_ID, PRODUCT_ID, STATUS, CREATED_AT)
-            VALUES (1, 1,'ADDED', '2025-07-27 15:00:34'),
-                   (2, 2, 'ADDED', '2025-07-10 15:00:34')
-            """.trimIndent(),
-        )
-
         val loginRequest =
             LoginRequest(
                 "admin@test.com",
@@ -77,9 +45,9 @@ class AdminStatsControllerTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
         val products = response.body().jsonPath().getList<String>("productName")
         assertThat(products).isNotEmpty()
-        assertThat(products.size).isEqualTo(2)
-        assertThat(products).contains("test1")
-        assertThat(products).contains("test2")
+        assertThat(products.size).isEqualTo(3)
+        assertThat(products).contains("Reusable Coffee Cup")
+        assertThat(products).contains("Cappuccino")
     }
 
     @Test
@@ -93,8 +61,8 @@ class AdminStatsControllerTest {
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
         val users = response.body().jsonPath()
-        assertThat(users.getList<Int>("memberId")).contains(1)
-        assertThat(users.getList<String>("memberEmail")).contains("admin@test.com")
-        assertThat(users.getList<String>("memberName")).contains("Admin")
+        assertThat(users.getList<Int>("memberId")).hasSize(2)
+        assertThat(users.getList<String>("memberEmail")).contains("user1@example.com")
+        assertThat(users.getList<String>("memberName")).contains("user1")
     }
 }
