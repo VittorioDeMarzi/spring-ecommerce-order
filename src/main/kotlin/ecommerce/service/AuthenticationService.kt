@@ -7,7 +7,9 @@ import ecommerce.dto.RegistrationRequest
 import ecommerce.dto.TokenResponse
 import ecommerce.exception.EmailOrPasswordIncorrectException
 import ecommerce.exception.MemberEmailAlreadyExistsException
+import ecommerce.model.Cart
 import ecommerce.model.Member
+import ecommerce.repository.CartJpaRepository
 import ecommerce.repository.MemberJpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,6 +19,7 @@ class AuthenticationService(
     private val tokenService: JwtTokenProvider,
     private val passwordEncoder: PasswordEncoder,
     private val memberJpaRepository: MemberJpaRepository,
+    private val cartJpaRepository: CartJpaRepository,
 ) {
     @Transactional
     fun registration(request: RegistrationRequest): TokenResponse {
@@ -31,7 +34,7 @@ class AuthenticationService(
                 password = hashedPassword,
                 role = "USER",
             )
-        memberJpaRepository.save(member)
+        cartJpaRepository.save(Cart(member))
         val token = tokenService.createToken(request.email)
         return TokenResponse(token)
     }
