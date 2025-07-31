@@ -3,7 +3,7 @@ package ecommerce.endToEnd
 import ecommerce.configuration.JwtTokenProvider
 import ecommerce.dto.LoginRequest
 import ecommerce.dto.RegistrationRequest
-import ecommerce.repository.MemberRepository
+import ecommerce.repository.MemberJpaRepository
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions
@@ -18,7 +18,7 @@ class AuthenticationControllerTest {
     lateinit var token: String
 
     @Autowired
-    private lateinit var memberRepository: MemberRepository
+    private lateinit var memberRepository: MemberJpaRepository
 
     @Autowired
     private lateinit var jwtTokenProvider: JwtTokenProvider
