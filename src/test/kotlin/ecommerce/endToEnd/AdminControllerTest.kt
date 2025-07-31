@@ -5,6 +5,7 @@ import ecommerce.dto.ProductRequest
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions.assertThat
+import org.json.JSONObject
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -46,9 +47,9 @@ class AdminControllerTest {
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
-        val names = response.body().jsonPath().getList<String>("")
-        assertThat(names).isNotEmpty()
-        assertThat(names.size).isEqualTo(10)
+        val jsonObject = JSONObject(response.asString())
+        assertThat(jsonObject.get("totalPages")).isEqualTo(2)
+        assertThat(jsonObject.get("totalElements")).isEqualTo(10)
     }
 
     @Test
