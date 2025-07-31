@@ -3,7 +3,7 @@ package ecommerce.configuration
 import ecommerce.annotation.LoginMember
 import ecommerce.dto.MemberDto
 import ecommerce.exception.UnauthorizedException
-import ecommerce.repository.MemberRepository
+import ecommerce.repository.MemberJpaRepository
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
@@ -14,7 +14,7 @@ import org.springframework.web.method.support.ModelAndViewContainer
 
 @Component
 class LoginMemberArgumentResolver(
-    private val memberRepository: MemberRepository,
+    private val memberRepository: MemberJpaRepository,
 ) : HandlerMethodArgumentResolver {
     override fun supportsParameter(parameter: MethodParameter): Boolean {
         return parameter.hasParameterAnnotation(LoginMember::class.java)

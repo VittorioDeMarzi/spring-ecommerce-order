@@ -3,7 +3,7 @@ package ecommerce.configuration
 import ecommerce.annotation.AdminOnly
 import ecommerce.exception.ForbiddenException
 import ecommerce.exception.UnauthorizedException
-import ecommerce.repository.MemberRepository
+import ecommerce.repository.MemberJpaRepository
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
@@ -14,7 +14,7 @@ import org.springframework.web.method.support.ModelAndViewContainer
 
 @Component
 class AdminOnlyResolver(
-    private val memberRepository: MemberRepository,
+    private val memberRepository: MemberJpaRepository,
 ) : HandlerMethodArgumentResolver {
     override fun supportsParameter(parameter: MethodParameter): Boolean {
         return parameter.hasParameterAnnotation(AdminOnly::class.java)
