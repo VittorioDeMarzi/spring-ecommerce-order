@@ -2,7 +2,7 @@ package ecommerce.endToEnd
 
 import ecommerce.dto.CartItemRequest
 import ecommerce.dto.RegistrationRequest
-import ecommerce.repository.CartItemRepository
+import ecommerce.repository.CartItemJpaRepository
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.annotation.DirtiesContext
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -20,20 +19,10 @@ class CartControllerTest {
     lateinit var token: String
 
     @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
-
-    @Autowired
-    private lateinit var cartItemRepository: CartItemRepository
+    private lateinit var cartItemRepository: CartItemJpaRepository
 
     @BeforeEach
     fun setUp() {
-        jdbcTemplate.execute(
-            """
-            INSERT INTO PRODUCTS (ID, NAME, PRICE, IMAGE_URL)
-            VALUES (11, 'test', 11.90, 'http://www.test.jpg')
-            """.trimIndent(),
-        )
-
         val registrationRequest =
             RegistrationRequest(
                 "test",
@@ -53,7 +42,7 @@ class CartControllerTest {
     fun addToCart() {
         val productToCart =
             CartItemRequest(
-                productId = 11,
+                productId = 1,
                 quantity = 2,
             )
 
