@@ -23,7 +23,6 @@ class GuestProductController(
         @RequestParam(defaultValue = "5") size: Int,
         @RequestParam(defaultValue = "id") sortBy: String,
         @RequestParam(defaultValue = "true") ascending: Boolean,
-        sort: Sort,
     ): ResponseEntity<Page<ProductResponse>> {
         val sort = if (ascending) Sort.by(sortBy).ascending() else Sort.by(sortBy).descending()
         val pageable = PageRequest.of(page, size, sort)
