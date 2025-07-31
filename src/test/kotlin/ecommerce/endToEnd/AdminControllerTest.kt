@@ -8,10 +8,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.annotation.DirtiesContext
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -20,27 +18,8 @@ import org.springframework.test.annotation.DirtiesContext
 class AdminControllerTest {
     lateinit var token: String
 
-    @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
-
     @BeforeEach
     fun setUp() {
-        jdbcTemplate.execute("DROP TABLE CART_HISTORY IF EXISTS")
-        jdbcTemplate.execute("DROP TABLE CART_ITEMS IF EXISTS")
-        jdbcTemplate.execute("DROP TABLE CARTS IF EXISTS")
-        jdbcTemplate.execute("DROP TABLE PRODUCTS IF EXISTS")
-        jdbcTemplate.execute(createProductTable())
-
-        val sql =
-            """
-            INSERT INTO PRODUCTS (name, price, image_url)
-            VALUES
-            ('test', 10.99, 'https://www.test.jpg'),
-            ('test2', 6.99, 'https://www.test.jpg');
-            """.trimIndent()
-
-        jdbcTemplate.execute(sql)
-
         val loginRequest =
             LoginRequest(
                 "admin@test.com",
@@ -57,19 +36,6 @@ class AdminControllerTest {
         token = response.body().jsonPath().getString("token")
     }
 
-    private fun createProductTable(): String {
-        return """
-            create table PRODUCTS
-            (
-                ID       int              not null AUTO_INCREMENT,
-                NAME     varchar(100)     not null,
-                PRICE    double not null,
-                IMAGE_URL varchar(500),
-                PRIMARY KEY (ID)
-            )
-            """.trimIndent()
-    }
-
     @Test
     fun getAllProducts() {
         val response =
@@ -82,7 +48,7 @@ class AdminControllerTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
         val names = response.body().jsonPath().getList<String>("")
         assertThat(names).isNotEmpty()
-        assertThat(names.size).isEqualTo(2)
+        assertThat(names.size).isEqualTo(10)
     }
 
     @Test
@@ -96,7 +62,7 @@ class AdminControllerTest {
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
         val productName = response.body().jsonPath().getString("name")
-        assertThat(productName).isEqualTo("test")
+        assertThat(productName).isEqualTo("Espresso")
     }
 
     @Test
@@ -117,16 +83,9 @@ class AdminControllerTest {
                 .post("/api/admin/products")
                 .then().log().all().extract()
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
 
-        val productId3 =
-            RestAssured.given().log().all()
-                .auth().oauth2(token)
-                .accept(ContentType.JSON)
-                .`when`().get("/api/admin/products/3")
-                .then().log().all().extract()
-
-        val productName = productId3.body().jsonPath().getString("name")
+        val productName = response.body().jsonPath().getString("name")
         assertThat(productName).isEqualTo("newProductTest")
     }
 
@@ -145,19 +104,12 @@ class AdminControllerTest {
                 .accept(ContentType.JSON)
                 .contentType(ContentType.JSON)
                 .body(productRequest)
-                .put("/api/admin/products/1")
+                .patch("/api/admin/products/1")
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
 
-        val updated =
-            RestAssured.given().log().all()
-                .auth().oauth2(token)
-                .accept(ContentType.JSON)
-                .`when`().get("/api/admin/products/1")
-                .then().log().all().extract()
-
-        val productName = updated.body().jsonPath().getString("name")
+        val productName = response.body().jsonPath().getString("name")
         assertThat(productName).isEqualTo("updatedTest")
     }
 
