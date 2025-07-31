@@ -9,14 +9,14 @@ import jakarta.persistence.Id
 
 @Entity
 data class Product(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
     @Column(nullable = false, unique = true)
     val name: String,
     @Column(nullable = false)
     val price: Double,
     val imageUrl: String,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0L,
 )
 
 fun Product.toDto(): ProductResponse {
