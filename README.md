@@ -42,10 +42,10 @@ In this step, the codebase will integrate Spring Data JPA for database interacti
 ## STEP 1-1 - Entity Mapping - Entity Mapping
 
 ### Features
-- [ ] Refactor existing codebase from spring-ecommerce-product from JdbcTemplate to use Spring Data JPA.
-- [ ] Model real domain objects and map them to database tables using JPA annotations
-- [ ] Write learning tests using @DataJpaTest.
-- [ ] objects should use references to navigate relationships like:
+- [x] Refactor existing codebase from spring-ecommerce-product from JdbcTemplate to use Spring Data JPA.
+- [x] Model real domain objects and map them to database tables using JPA annotations
+- [x] Write learning tests using @DataJpaTest.
+- [x] objects should use references to navigate relationships like:
   ```kotlin
   val question = findQuestionById(questionId)
   val answers = question.answers
