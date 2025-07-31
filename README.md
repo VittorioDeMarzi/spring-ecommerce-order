@@ -50,3 +50,18 @@ In this step, the codebase will integrate Spring Data JPA for database interacti
   val question = findQuestionById(questionId)
   val answers = question.answers
   ```
+
+## STEP 1-2 - Pagination
+
+### Features
+
+1. **Product List Pagination**
+- [ ] Users can request a specific page and size.
+- [ ] Optional sorting by one or more fields (ascending or descending).
+
+2. **Wishlist Pagination**
+- [ ] Similar functionality applied to the wishlist view.
+
+3. **Sorting**
+- [ ]  The `sort` parameter defines how the data should be ordered.
+- [ ] Supports multiple sort fields, e.g. `sort=price,desc&sort=name,asc`.
