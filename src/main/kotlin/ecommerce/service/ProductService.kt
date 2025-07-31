@@ -10,6 +10,8 @@ import ecommerce.exception.ProductNotFoundException
 import ecommerce.exception.ProductUpdateException
 import ecommerce.model.toDto
 import ecommerce.repository.ProductJpaRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrNull
 
@@ -21,9 +23,10 @@ class ProductService(private val productJpaRepository: ProductJpaRepository) {
         return product.toDto()
     }
 
-    fun findAll(): List<ProductResponse> {
-        val products = productJpaRepository.findAll()
-        return products.map { it.toDto() }
+    fun findAll(pageable: Pageable): Page<ProductResponse> {
+        val products = productJpaRepository.findAll(pageable)
+
+        return products.map { product -> product.toDto() }
     }
 
     fun createProduct(productRequest: ProductRequest): ProductResponse {

@@ -7,6 +7,9 @@ import ecommerce.dto.ProductRequest
 import ecommerce.dto.ProductResponse
 import ecommerce.service.ProductService
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -34,8 +38,15 @@ class AdminProductController(
     @GetMapping
     fun getAllProducts(
         @AdminOnly member: MemberDto,
-    ): ResponseEntity<List<ProductResponse>> {
-        return ResponseEntity.ok(productService.findAll())
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "5") size: Int,
+        @RequestParam(defaultValue = "id") sortBy: String,
+        @RequestParam(defaultValue = "true") ascending: Boolean,
+        sort: Sort,
+    ): ResponseEntity<Page<ProductResponse>> {
+        val sort = if (ascending) Sort.by(sortBy).ascending() else Sort.by(sortBy).descending()
+        val pageable = PageRequest.of(page, size, sort)
+        return ResponseEntity.ok(productService.findAll(pageable))
     }
 
     @GetMapping("/{id}")
