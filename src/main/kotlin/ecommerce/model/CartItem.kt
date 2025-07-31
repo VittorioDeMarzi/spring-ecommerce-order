@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import org.hibernate.annotations.CreationTimestamp
+import java.time.LocalDateTime
 
 @Entity
 data class CartItem(
@@ -17,6 +19,8 @@ data class CartItem(
     @JoinColumn(name = "product_id")
     val product: Product,
     var quantity: Int,
+    @CreationTimestamp
+    var createdAt: LocalDateTime = LocalDateTime.now(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
