@@ -8,6 +8,9 @@ import ecommerce.repository.CartJpaRepository
 import ecommerce.repository.ProductJpaRepository
 import ecommerce.repository.getByIdOrThrow
 import ecommerce.repository.getByMemberId
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -29,9 +32,16 @@ class CartService(
         return cartItem.toDto()
     }
 
-    fun getCartItems(memberId: Long): List<CartItemResponse> {
+    fun getCartItems(
+        memberId: Long,
+        pageable: Pageable,
+    ): Page<CartItemResponse> {
         val cart = cartJpaRepository.getByMemberId(memberId)
-        return cart.cartProducts.map { it.toDto() }
+        val products = cart.cartProducts
+        val start = pageable.offset.toInt()
+        val end = Math.min((start + pageable.pageSize), products.size) // replace by coerce kotlin?
+        val productsInPage = products.subList(start, end)
+        return PageImpl(productsInPage.map { it.toDto() }, pageable, products.size.toLong())
     }
 
     fun deleteProductFromCart(
