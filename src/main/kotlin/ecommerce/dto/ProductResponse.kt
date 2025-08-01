@@ -5,4 +5,5 @@ data class ProductResponse(
     val name: String,
     val price: Double,
     val imageUrl: String,
+    val option: List<OptionDto>,
 )
