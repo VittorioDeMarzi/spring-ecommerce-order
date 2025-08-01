@@ -11,7 +11,7 @@ import jakarta.persistence.ManyToOne
 @Entity
 class Option(
     val name: String,
-    val quantity: Int,
+    var quantity: Int,
     @ManyToOne
     @JoinColumn(name = "product_id")
     val product: Product? = null,
@@ -21,5 +21,10 @@ class Option(
 ) {
     fun toDto(): OptionDto {
         return OptionDto(name, quantity)
+    }
+
+    fun reduceOptionQuantity(value: Int) {
+        require(quantity >= value) { "Halloooooo quantity: $quantity" }
+        quantity -= value
     }
 }
