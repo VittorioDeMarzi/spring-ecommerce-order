@@ -138,6 +138,27 @@ class AdminControllerTest {
                 .`when`().get("/api/admin/products/1")
                 .then().log().all().extract()
 
-//        assertThat(deleted.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value())
+        assertThat(deleted.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value())
+    }
+
+    @Test
+    fun addOption() {
+        val optionRequest = OptionDto("newOptionTest", 10)
+
+        val response =
+            RestAssured.given().log().all()
+                .auth().oauth2(token)
+                .accept(ContentType.JSON)
+                .contentType(ContentType.JSON)
+                .body(optionRequest)
+                .post("/api/admin/products/add/option/1")
+                .then().log().all().extract()
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
+
+        val json = JSONObject(response.asString())
+        val array = json.getJSONArray("options")
+        assertThat(array.length()).isEqualTo(2)
+        assertThat(array.getJSONObject(1).getString("name")).isEqualTo("newOptionTest")
     }
 }
