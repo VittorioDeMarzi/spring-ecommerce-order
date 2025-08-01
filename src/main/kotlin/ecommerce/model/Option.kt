@@ -1,6 +1,7 @@
 package ecommerce.model
 
 import ecommerce.dto.OptionDto
+import ecommerce.exception.InsufficientQuantityException
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -24,7 +25,9 @@ class Option(
     }
 
     fun reduceOptionQuantity(value: Int) {
-        require(quantity >= value) { "Halloooooo quantity: $quantity" }
+        if (quantity < value) {
+            throw InsufficientQuantityException("Insufficient quantity: $quantity")
+        }
         quantity -= value
     }
 }

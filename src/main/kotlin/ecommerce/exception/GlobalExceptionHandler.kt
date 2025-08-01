@@ -18,7 +18,12 @@ class GlobalExceptionHandler {
         return ResponseEntity(errorMessage, HttpStatus.NOT_FOUND)
     }
 
-    @ExceptionHandler(RuntimeException::class)
+    @ExceptionHandler(
+        value = [
+            RuntimeException::class,
+            InsufficientQuantityException::class,
+        ],
+    )
     fun handleRunTime(ex: RuntimeException): ResponseEntity<ErrorMessageModel> {
         val errorMessage =
             ErrorMessageModel(
