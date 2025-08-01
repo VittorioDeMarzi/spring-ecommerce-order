@@ -1,5 +1,6 @@
 package ecommerce.exception
 
+import ecommerce.dto.OptionDto
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.RegistrationRequest
 import io.restassured.RestAssured
@@ -63,7 +64,8 @@ class ValidationTest {
 
     @Test
     fun `Should throw if name of product is blank`() {
-        val product = ProductRequest("", 39.00, "http://www.test.com/test.jpg")
+        val optionRequest = listOf(OptionDto("option", 10))
+        val product = ProductRequest("", 39.00, "http://www.test.com/test.jpg", optionRequest)
         val response =
             RestAssured
                 .given().log().all().body(product)
@@ -80,7 +82,8 @@ class ValidationTest {
 
     @Test
     fun `Should throw if name has more then 15 letters`() {
-        val product = ProductRequest("1234567890123 56", 39.00, "http://www.test.com/test.jpg")
+        val optionRequest = listOf(OptionDto("option", 10))
+        val product = ProductRequest("1234567890123 56", 39.00, "http://www.test.com/test.jpg", optionRequest)
         val response =
             RestAssured
                 .given().log().all().body(product)
@@ -97,7 +100,8 @@ class ValidationTest {
 
     @Test
     fun `Should throw if name has invalid characters`() {
-        val product = ProductRequest("?", 39.00, "http://www.test.com/test.jpg")
+        val optionRequest = listOf(OptionDto("option", 10))
+        val product = ProductRequest("?", 39.00, "http://www.test.com/test.jpg", optionRequest)
         val response =
             RestAssured
                 .given().log().all().body(product)
@@ -116,7 +120,8 @@ class ValidationTest {
 
     @Test
     fun `Should throw if price is 0`() {
-        val product = ProductRequest("Table", 0.0, "http://www.test.com/test.jpg")
+        val optionRequest = listOf(OptionDto("option", 10))
+        val product = ProductRequest("Table", 0.0, "http://www.test.com/test.jpg", optionRequest)
         val response =
             RestAssured
                 .given().log().all().body(product)
@@ -135,7 +140,8 @@ class ValidationTest {
 
     @Test
     fun `Should throw if price is lower`() {
-        val product = ProductRequest("Table", -10.0, "http://www.test.com/test.jpg")
+        val optionRequest = listOf(OptionDto("option", 10))
+        val product = ProductRequest("Table", -10.0, "http://www.test.com/test.jpg", optionRequest)
         val response =
             RestAssured
                 .given().log().all().body(product)
@@ -154,7 +160,8 @@ class ValidationTest {
 
     @Test
     fun `Should throw if url is not valid`() {
-        val product = ProductRequest("Table", 10.0, "www.test.com")
+        val optionRequest = listOf(OptionDto("option", 10))
+        val product = ProductRequest("Table", 10.0, "www.test.com", optionRequest)
         val response =
             RestAssured
                 .given().log().all().body(product)

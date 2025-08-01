@@ -1,5 +1,6 @@
 package ecommerce.repository
 
+import ecommerce.model.Option
 import ecommerce.model.Product
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +14,8 @@ class ProductRepositoryTest {
 
     @Test
     fun save() {
-        val expected = Product("test", 10.0, "https://google.com")
+        val option = Option("test", 10)
+        val expected = Product("test", mutableListOf(option), 10.0, "https://google.com")
         val actual = productJpaRepository.save(expected)
         assertThat(actual.id).isNotNull
         assertThat(actual.id).isNotZero
@@ -22,8 +24,9 @@ class ProductRepositoryTest {
 
     @Test
     fun findAll() {
-        val expected = Product("test", 10.0, "https://google.com")
-        val expected2 = Product("test2", 10.0, "https://google.com")
+        val option = Option("test", 10)
+        val expected = Product("test", mutableListOf(option), 10.0, "https://google.com")
+        val expected2 = Product("test2", mutableListOf(option), 10.0, "https://google.com")
         productJpaRepository.save(expected)
         productJpaRepository.save(expected2)
         val products = productJpaRepository.findAll()
@@ -38,7 +41,8 @@ class ProductRepositoryTest {
 
     @Test
     fun existByName() {
-        val expected = Product("test", 10.0, "https://google.com")
+        val option = Option("test", 10)
+        val expected = Product("test", mutableListOf(option), 10.0, "https://google.com")
         productJpaRepository.save(expected)
         val product = productJpaRepository.existsByName("test")
         assertThat(product).isTrue
