@@ -42,4 +42,14 @@ VALUES (1, 'ADDED', NOW()),
        (3, 'ADDED', NOW()),
        (4, 'ADDED', NOW());
 
-
+INSERT INTO OPTION (NAME, QUANTITY, PRODUCT_ID)
+VALUES ('option1', '4', 1),
+       ('option2', '4', 2),
+       ('option3', '4', 3),
+       ('option4', '4', 4),
+       ('option5', '4', 5),
+       ('option6', '4', 6),
+       ('option7', '4', 7),
+       ('option8', '4', 8),
+       ('option9', '4', 9),
+       ('option10', '4', 10);
