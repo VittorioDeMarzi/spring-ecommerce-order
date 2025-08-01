@@ -1,5 +1,6 @@
 package ecommerce.service
 
+import ecommerce.dto.OptionDto
 import ecommerce.dto.ProductPatchRequest
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.ProductResponse
@@ -63,5 +64,15 @@ class ProductService(private val productJpaRepository: ProductJpaRepository) {
         } catch (e: Exception) {
             throw ProductNotFoundException("Product not found, id: $id")
         }
+    }
+
+    fun addOptionToProduct(
+        id: Long,
+        option: OptionDto,
+    ): ProductResponse {
+        val product = productJpaRepository.getByIdOrThrow(id)
+        product.addOption(option.toEntity())
+//        return productJpaRepository.save(product).toDto()
+        return product.toDto()
     }
 }
