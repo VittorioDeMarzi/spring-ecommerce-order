@@ -74,7 +74,7 @@ class AdminControllerTest {
                 "newProductTest",
                 2.99,
                 "http://www.newProduct.jpg",
-                listOf(OptionDto("option1", 10)),
+                listOf(OptionDto("option1", 10), OptionDto("option2", 10)),
             )
 
         val response =
@@ -90,6 +90,8 @@ class AdminControllerTest {
 
         val productName = response.body().jsonPath().getString("name")
         assertThat(productName).isEqualTo("newProductTest")
+        val json = JSONObject(response.asString())
+        assertThat(json.getJSONArray("options").length()).isEqualTo(2)
     }
 
     @Test
