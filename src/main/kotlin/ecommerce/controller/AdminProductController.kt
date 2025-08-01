@@ -2,6 +2,7 @@ package ecommerce.controller
 
 import ecommerce.annotation.AdminOnly
 import ecommerce.dto.MemberDto
+import ecommerce.dto.OptionDto
 import ecommerce.dto.ProductPatchRequest
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.ProductResponse
@@ -73,5 +74,15 @@ class AdminProductController(
     ): ResponseEntity<Void> {
         productService.deleteProduct(id)
         return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/add/option/{id}")
+    fun addOptionToProduct(
+        @PathVariable id: Long,
+        @AdminOnly member: MemberDto,
+        @RequestBody option: OptionDto,
+    ): ResponseEntity<ProductResponse> {
+        val updatedProduct = productService.addOptionToProduct(id, option)
+        return ResponseEntity.ok(updatedProduct)
     }
 }
