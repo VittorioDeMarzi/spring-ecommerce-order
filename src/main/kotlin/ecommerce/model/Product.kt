@@ -22,6 +22,11 @@ data class Product(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
+    fun addOption(option: Option) {
+        require(options.none { it.name == option.name })
+        options.add(option)
+    }
+
     init {
         require(options.isNotEmpty())
         require(options.distinctBy { it.name }.size == options.size)
