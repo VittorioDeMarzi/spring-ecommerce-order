@@ -68,7 +68,7 @@ In this step, the codebase will integrate Spring Data JPA for database interacti
 
 ## Step 1.3 - Product Option
 
-- [ ] Add options to product information.
+- [x] Add options to product information.
 ### Example
 Implement the feature so it can handle HTTP requests and responses as shown below.
 
@@ -92,14 +92,14 @@ Content-Type: application/json
 ```
 
 ### Constraints
-1. A product must always have at least one option. 
-2. Option names can include up to 50 characters, including spaces. 
-3. Allowed special characters in option names:
+1. [x] A product must always have at least one option. 
+2. [x] Option names can include up to 50 characters, including spaces. 
+3. [x] Allowed special characters in option names:
    - (, ), [, ], +, -, &, /, _
    - All other special characters are not allowed. 
-4. Option quantity must be at least 1 and less than 100,000,000. 
-5. Duplicate option names are not allowed within the same product to prevent confusion during purchase. 
-   6. Implement a method to decrease the quantity of a product option by a specified amount:
+4. [x] Option quantity must be at least 1 and less than 100,000,000. 
+5. [x] Duplicate option names are not allowed within the same product to prevent confusion during purchase. 
+6. [x] Implement a method to decrease the quantity of a product option by a specified amount:
    - No need to create a separate HTTP API. 
    - This logic should be implemented in the Service class or Entity class for future reuse.
 
