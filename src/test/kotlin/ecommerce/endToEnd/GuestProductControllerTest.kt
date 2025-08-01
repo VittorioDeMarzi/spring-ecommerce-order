@@ -2,6 +2,8 @@ package ecommerce.endToEnd
 
 import io.restassured.RestAssured
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
+import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
@@ -22,9 +24,8 @@ class GuestProductControllerTest {
                 .response()
 
         Assertions.assertThat(response.statusCode).isEqualTo(HttpStatus.OK.value())
-        val products = response.body().jsonPath().getList<String>("")
-        Assertions.assertThat(products).isNotEmpty()
-        Assertions.assertThat(products.size).isEqualTo(10)
+        val products = JSONObject(response.asString())
+        assertThat(products.get("totalElements")).isEqualTo(10)
     }
 
     @Test
