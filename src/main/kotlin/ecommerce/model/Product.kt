@@ -24,6 +24,7 @@ data class Product(
 ) {
     init {
         require(options.isNotEmpty())
+        require(options.distinctBy { it.name }.size == options.size)
     }
 }
 
