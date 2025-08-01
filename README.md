@@ -60,8 +60,48 @@ In this step, the codebase will integrate Spring Data JPA for database interacti
 - [x] Optional sorting by one or more fields (ascending or descending).
 
 2. **Wishlist Pagination**
-- [ ] Similar functionality applied to the wishlist view.
+- [x] Similar functionality applied to the wishlist view.
 
 3. **Sorting**
 - [x]  The `sort` parameter defines how the data should be ordered.
-- [ ] Supports multiple sort fields, e.g. `sort=price,desc&sort=name,asc`.
+- [x] Supports multiple sort fields, e.g. `sort=price,desc&sort=name,asc`.
+
+## Step 1.3 - Product Option
+
+- [ ] Add options to product information.
+### Example
+Implement the feature so it can handle HTTP requests and responses as shown below.
+
+#### Request
+```kotlin
+GET /api/products/1/options HTTP/1.1
+```
+
+#### Response
+```kotlin
+HTTP/1.1 200
+Content-Type: application/json
+
+[
+  {
+    "id": 464946561,
+    "name": "01. [Best] Shea Butter Hand & Shea Stick Lip Balm",
+    "quantity": 969
+  }
+]
+```
+
+### Constraints
+1. A product must always have at least one option. 
+2. Option names can include up to 50 characters, including spaces. 
+3. Allowed special characters in option names:
+   - (, ), [, ], +, -, &, /, _
+   - All other special characters are not allowed. 
+4. Option quantity must be at least 1 and less than 100,000,000. 
+5. Duplicate option names are not allowed within the same product to prevent confusion during purchase. 
+   6. Implement a method to decrease the quantity of a product option by a specified amount:
+   - No need to create a separate HTTP API. 
+   - This logic should be implemented in the Service class or Entity class for future reuse.
+
+
+
