@@ -4,22 +4,21 @@ import ecommerce.dto.ProductPatchRequest
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.ProductResponse
 import ecommerce.dto.toEntity
-import ecommerce.exception.ProductAlreadyInDBException
 import ecommerce.exception.ProductCreationException
 import ecommerce.exception.ProductNotFoundException
 import ecommerce.exception.ProductUpdateException
 import ecommerce.model.toDto
 import ecommerce.repository.ProductJpaRepository
+import ecommerce.repository.existsByNameOrThrow
+import ecommerce.repository.getByIdOrThrow
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 class ProductService(private val productJpaRepository: ProductJpaRepository) {
     fun findById(id: Long): ProductResponse {
-        val product =
-            productJpaRepository.findById(id).getOrNull() ?: throw ProductNotFoundException("Product not found, id: $id")
+        val product = productJpaRepository.getByIdOrThrow(id)
         return product.toDto()
     }
 
@@ -30,9 +29,7 @@ class ProductService(private val productJpaRepository: ProductJpaRepository) {
     }
 
     fun createProduct(productRequest: ProductRequest): ProductResponse {
-        if (productJpaRepository.existsByName(productRequest.name)) {
-            throw ProductAlreadyInDBException("Product already exists with name: ${productRequest.name}")
-        }
+        productJpaRepository.existsByNameOrThrow(productRequest.name)
         try {
             return productJpaRepository.save(productRequest.toEntity()).toDto()
         } catch (e: Exception) {
@@ -44,8 +41,7 @@ class ProductService(private val productJpaRepository: ProductJpaRepository) {
         id: Long,
         productRequest: ProductPatchRequest,
     ): ProductResponse {
-        val product =
-            productJpaRepository.findById(id).getOrNull() ?: throw ProductNotFoundException("Product not found, id: $id")
+        val product = productJpaRepository.getByIdOrThrow(id)
         val newProduct =
             product.copy(
                 name = productRequest.name ?: product.name,
@@ -63,7 +59,7 @@ class ProductService(private val productJpaRepository: ProductJpaRepository) {
 
     fun deleteProduct(id: Long) {
         try {
-            val deleted = productJpaRepository.deleteById(id)
+            productJpaRepository.deleteById(id)
         } catch (e: Exception) {
             throw ProductNotFoundException("Product not found, id: $id")
         }
