@@ -1,6 +1,5 @@
 package ecommerce.model
 
-import ecommerce.dto.ProductResponse
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -13,11 +12,11 @@ import jakarta.persistence.OneToMany
 data class Product(
     @Column(nullable = false, unique = true)
     val name: String,
-    @OneToMany(mappedBy = "product", cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
-    val options: MutableList<Option> = mutableListOf(),
     @Column(nullable = false)
     val price: Double,
     val imageUrl: String,
+    @OneToMany(mappedBy = "product", cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+    val options: MutableList<Option> = mutableListOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
@@ -31,8 +30,4 @@ data class Product(
         require(options.isNotEmpty())
         require(options.distinctBy { it.name }.size == options.size)
     }
-}
-
-fun Product.toDto(): ProductResponse {
-    return ProductResponse(id, name, price, imageUrl, options.map { it.toDto() })
 }

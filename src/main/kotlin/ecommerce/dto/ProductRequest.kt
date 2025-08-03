@@ -1,5 +1,6 @@
 package ecommerce.dto
 
+import ecommerce.mapper.toEntity
 import ecommerce.model.Product
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
