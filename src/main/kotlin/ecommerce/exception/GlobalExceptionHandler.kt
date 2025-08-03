@@ -8,15 +8,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
-    @ExceptionHandler(ProductNotFoundException::class)
-    fun handleProductNotFound(ex: ProductNotFoundException): ResponseEntity<ErrorMessageModel> {
-        val errorMessage =
-            ErrorMessageModel(
-                HttpStatus.NOT_FOUND.value(),
-                ex.message,
-            )
-        return ResponseEntity(errorMessage, HttpStatus.NOT_FOUND)
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleValidationError(ex: MethodArgumentNotValidException): ResponseEntity<Map<String, String>> {
+        val errors =
+            ex.bindingResult.fieldErrors.associate {
+                it.field to (it.defaultMessage ?: "Invalid value")
+            }
+        return ResponseEntity.badRequest().body(errors)
     }
+
+    @ExceptionHandler(ProductNotFoundException::class)
+    fun handleNotFound(ex: ProductNotFoundException) = buildErrorResponse(HttpStatus.NOT_FOUND, ex)
 
     @ExceptionHandler(
         value = [
@@ -33,25 +35,10 @@ class GlobalExceptionHandler {
             ProductUpdateException::class,
             ElementNotFoundException::class,
             MemberNotFoundException::class,
+            ProductDeleteException::class,
         ],
     )
-    fun handleUserNotFound(ex: RuntimeException): ResponseEntity<ErrorMessageModel> {
-        val errorMessage =
-            ErrorMessageModel(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                ex.message,
-            )
-        return ResponseEntity(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleValidationError(ex: MethodArgumentNotValidException): ResponseEntity<Map<String, String>> {
-        val errors =
-            ex.bindingResult.fieldErrors.associate {
-                it.field to (it.defaultMessage ?: "Invalid value")
-            }
-        return ResponseEntity.badRequest().body(errors)
-    }
+    fun handleInternalServerError(ex: RuntimeException) = buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex)
 
     @ExceptionHandler(
         value = [
@@ -59,14 +46,7 @@ class GlobalExceptionHandler {
             MemberEmailAlreadyExistsException::class,
         ],
     )
-    fun handleProductAlreadyInDBException(ex: RuntimeException): ResponseEntity<ErrorMessageModel> {
-        val errorMessage =
-            ErrorMessageModel(
-                HttpStatus.CONFLICT.value(),
-                ex.message,
-            )
-        return ResponseEntity(errorMessage, HttpStatus.CONFLICT)
-    }
+    fun handleConflict(ex: RuntimeException) = buildErrorResponse(HttpStatus.CONFLICT, ex)
 
     @ExceptionHandler(
         value = [
@@ -74,24 +54,10 @@ class GlobalExceptionHandler {
             ForbiddenException::class,
         ],
     )
-    fun handleEmailOrPasswordIncorrectException(ex: RuntimeException): ResponseEntity<ErrorMessageModel> {
-        val errorMessage =
-            ErrorMessageModel(
-                HttpStatus.FORBIDDEN.value(),
-                ex.message,
-            )
-        return ResponseEntity(errorMessage, HttpStatus.FORBIDDEN)
-    }
+    fun handleForbidden(ex: RuntimeException) = buildErrorResponse(HttpStatus.FORBIDDEN, ex)
 
     @ExceptionHandler(UnauthorizedException::class)
-    fun handleUnauthorizedException(ex: UnauthorizedException): ResponseEntity<ErrorMessageModel> {
-        val errorMessage =
-            ErrorMessageModel(
-                HttpStatus.UNAUTHORIZED.value(),
-                ex.message,
-            )
-        return ResponseEntity(errorMessage, HttpStatus.UNAUTHORIZED)
-    }
+    fun handleUnauthorizedException(ex: UnauthorizedException) = buildErrorResponse(HttpStatus.UNAUTHORIZED, ex)
 
     fun buildErrorResponse(
         status: HttpStatus,
