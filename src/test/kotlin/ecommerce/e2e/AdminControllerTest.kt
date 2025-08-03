@@ -1,4 +1,4 @@
-package ecommerce.endToEnd
+package ecommerce.e2e
 
 import ecommerce.dto.LoginRequest
 import ecommerce.dto.OptionDto
