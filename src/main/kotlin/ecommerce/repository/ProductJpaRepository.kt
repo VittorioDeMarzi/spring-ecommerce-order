@@ -14,6 +14,10 @@ fun ProductJpaRepository.existsByNameOrThrow(name: String) {
     if (existsByName(name)) throw ProductAlreadyInDBException("Product already exists with name: $name")
 }
 
+fun ProductJpaRepository.existsByIdOrThrow(id: Long) {
+    if (!existsById(id)) throw ProductNotFoundException("Product not found with id: $id")
+}
+
 interface ProductJpaRepository : JpaRepository<Product, Long> {
     fun existsByName(name: String): Boolean
 }
