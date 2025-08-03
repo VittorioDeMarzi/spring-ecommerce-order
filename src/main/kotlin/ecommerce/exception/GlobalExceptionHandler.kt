@@ -22,16 +22,10 @@ class GlobalExceptionHandler {
         value = [
             RuntimeException::class,
             InsufficientQuantityException::class,
+            IllegalArgumentException::class,
         ],
     )
-    fun handleRunTime(ex: RuntimeException): ResponseEntity<ErrorMessageModel> {
-        val errorMessage =
-            ErrorMessageModel(
-                HttpStatus.BAD_REQUEST.value(),
-                ex.message,
-            )
-        return ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST)
-    }
+    fun handleBadRequest(ex: RuntimeException) = buildErrorResponse(HttpStatus.BAD_REQUEST, ex)
 
     @ExceptionHandler(
         value = [
@@ -99,13 +93,12 @@ class GlobalExceptionHandler {
         return ResponseEntity(errorMessage, HttpStatus.UNAUTHORIZED)
     }
 
-    @ExceptionHandler(IllegalArgumentException::class)
-    fun handleIllegalArgumentException(ex: IllegalArgumentException): ResponseEntity<ErrorMessageModel> {
-        val errorMessage =
-            ErrorMessageModel(
-                HttpStatus.BAD_REQUEST.value(),
-                ex.message,
-            )
-        return ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST)
+    fun buildErrorResponse(
+        status: HttpStatus,
+        ex: RuntimeException,
+    ): ResponseEntity<ErrorMessageModel> {
+        println("Exception caught: ${ex.message},  $ex")
+        val errorMessage = ErrorMessageModel(status.value(), ex.message)
+        return ResponseEntity(errorMessage, status)
     }
 }
