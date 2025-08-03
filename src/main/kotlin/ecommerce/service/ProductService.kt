@@ -55,7 +55,6 @@ class ProductService(private val productJpaRepository: ProductJpaRepository) {
                 name = productRequest.name ?: product.name,
                 price = productRequest.price ?: product.price,
                 imageUrl = productRequest.imageUrl ?: product.imageUrl,
-                options = product.options,
             )
         try {
             productJpaRepository.save(newProduct)
@@ -79,7 +78,6 @@ class ProductService(private val productJpaRepository: ProductJpaRepository) {
     ): ProductResponse {
         val product = productJpaRepository.getByIdOrThrow(id)
         product.addOption(option.toEntity())
-//        return productJpaRepository.save(product).toDto()
         return product.toDto()
     }
 }
