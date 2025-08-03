@@ -1,6 +1,9 @@
 package ecommerce.model
 
+import ecommerce.dto.enum.CartHistoryStatus
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -15,7 +18,8 @@ data class CartHistory(
     val id: Long,
     @OneToOne
     val cartProduct: CartItem,
-    val status: String,
+    @Enumerated(EnumType.STRING)
+    val status: CartHistoryStatus,
     @CreationTimestamp
     var createdAt: LocalDateTime = LocalDateTime.now(),
 )
