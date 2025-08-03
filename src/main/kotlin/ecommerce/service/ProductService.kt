@@ -5,11 +5,12 @@ import ecommerce.dto.ProductPatchRequest
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.ProductResponse
 import ecommerce.exception.ProductCreationException
-import ecommerce.exception.ProductNotFoundException
+import ecommerce.exception.ProductDeleteException
 import ecommerce.exception.ProductUpdateException
 import ecommerce.mapper.toDto
 import ecommerce.mapper.toEntity
 import ecommerce.repository.ProductJpaRepository
+import ecommerce.repository.existsByIdOrThrow
 import ecommerce.repository.existsByNameOrThrow
 import ecommerce.repository.getByIdOrThrow
 import org.springframework.data.domain.Page
@@ -41,7 +42,7 @@ class ProductService(private val productJpaRepository: ProductJpaRepository) {
         try {
             return productJpaRepository.save(productRequest.toEntity()).toDto()
         } catch (e: Exception) {
-            throw ProductCreationException("Failed to create product")
+            throw ProductCreationException("Failed to create product", e)
         }
     }
 
@@ -60,15 +61,16 @@ class ProductService(private val productJpaRepository: ProductJpaRepository) {
             productJpaRepository.save(newProduct)
             return newProduct.toDto()
         } catch (e: Exception) {
-            throw ProductUpdateException("Failed to update product, id: $id")
+            throw ProductUpdateException("Failed to update product, id: $id", e)
         }
     }
 
     fun deleteProduct(id: Long) {
+        productJpaRepository.existsByIdOrThrow(id)
         try {
             productJpaRepository.deleteById(id)
         } catch (e: Exception) {
-            throw ProductNotFoundException("Product not found, id: $id")
+            throw ProductDeleteException("Product not found, id: $id", e)
         }
     }
 
