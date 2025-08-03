@@ -1,9 +1,9 @@
 package ecommerce.dto
 
-import java.sql.Timestamp
+import java.time.LocalDateTime
 
 data class TopProductStats(
     val productName: String,
-    val addedCount: Int,
-    val lastAddedAt: Timestamp,
+    val addedCount: Long,
+    val lastAddedAt: LocalDateTime,
 )
