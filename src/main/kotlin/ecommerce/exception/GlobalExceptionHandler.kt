@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice
 class GlobalExceptionHandler {
     @ExceptionHandler(ProductNotFoundException::class)
-    fun handleUserNotFound(ex: ProductNotFoundException): ResponseEntity<ErrorMessageModel> {
+    fun handleProductNotFound(ex: ProductNotFoundException): ResponseEntity<ErrorMessageModel> {
         val errorMessage =
             ErrorMessageModel(
                 HttpStatus.NOT_FOUND.value(),
