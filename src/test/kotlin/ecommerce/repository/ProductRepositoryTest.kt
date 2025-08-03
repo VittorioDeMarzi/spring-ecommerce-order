@@ -20,6 +20,10 @@ class ProductRepositoryTest {
         assertThat(actual.id).isNotNull
         assertThat(actual.id).isNotZero
         assertThat(actual.name).isEqualTo(expected.name)
+
+        assertThat(actual.options).hasSize(1)
+        assertThat(actual.options[0].name).isEqualTo("test")
+        assertThat(actual.options[0].quantity).isEqualTo(10)
     }
 
     @Test
