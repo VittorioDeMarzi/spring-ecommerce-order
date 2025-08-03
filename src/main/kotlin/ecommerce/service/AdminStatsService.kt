@@ -15,10 +15,11 @@ class AdminStatsService(
     }
 
     fun getTopActiveUsers(): List<ActiveUsersResponse> {
-        return cartHistoryJpaRepository.getTop5ActiveUsers()
+        return cartHistoryJpaRepository.getTop5ActiveUsers(LocalDateTime.now().minusDays(LAST_WEEK))
     }
 
     companion object {
         private const val LAST_MONTH = 30L
+        private const val LAST_WEEK = 7L
     }
 }
