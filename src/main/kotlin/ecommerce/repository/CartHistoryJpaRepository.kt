@@ -12,16 +12,14 @@ interface CartHistoryJpaRepository : JpaRepository<CartHistory, Long> {
     @Query(
         """
         SELECT new ecommerce.dto.TopProductStats(
-        p.name,
-        COUNT(ch),
+        ch.product.name,
+        COUNT(ch.product.name),
         MAX(ch.createdAt)
     )
     FROM CartHistory ch
-    JOIN ch.cartProduct ci
-    JOIN ci.product p
     WHERE ch.createdAt >= :since
-    GROUP BY p.name
-    ORDER BY COUNT(ch) DESC, MAX(ch.createdAt) DESC
+    GROUP BY ch.product.name
+    ORDER BY COUNT(ch.product.name) DESC, MAX(ch.createdAt) DESC
     """,
     )
     fun getTopProducts(
@@ -31,14 +29,11 @@ interface CartHistoryJpaRepository : JpaRepository<CartHistory, Long> {
     @Query(
         """
     SELECT DISTINCT new ecommerce.dto.ActiveUsersResponse(
-        m.id, m.name, m.email
+        ch.member.id, ch.member.name, ch.member.email
     )
-    FROM Member m, Cart c, CartItem ci, CartHistory ch
-    WHERE m.id = c.member.id
-    AND ci.cart.id = c.id
-    AND ch.cartProduct.id = ci.id
-    AND ch.createdAt > :since
-    ORDER BY m.id
+    FROM CartHistory ch
+    WHERE ch.createdAt > :since
+    ORDER BY ch.member.id
     """,
     )
     fun getTop5ActiveUsers(
