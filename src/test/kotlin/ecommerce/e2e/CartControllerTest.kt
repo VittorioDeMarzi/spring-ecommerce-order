@@ -2,7 +2,8 @@ package ecommerce.e2e
 
 import ecommerce.dto.CartItemRequest
 import ecommerce.dto.RegistrationRequest
-import ecommerce.repository.CartItemJpaRepository
+import ecommerce.dto.enum.CartHistoryStatus
+import ecommerce.repository.CartHistoryJpaRepository
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions
@@ -21,7 +22,7 @@ class CartControllerTest {
     lateinit var token: String
 
     @Autowired
-    private lateinit var cartItemRepository: CartItemJpaRepository
+    private lateinit var cartHistoryJpaRepository: CartHistoryJpaRepository
 
     @BeforeEach
     fun setUp() {
@@ -114,5 +115,31 @@ class CartControllerTest {
         assertThat(getAfterDeleteResponse.statusCode()).isEqualTo(HttpStatus.OK.value())
         val jsonObjectAfter = JSONObject(getAfterDeleteResponse.asString())
         assertThat(jsonObjectAfter.get("totalElements")).isEqualTo(0)
+    }
+
+    @Test
+    fun `when product added to cart should add a new cart history element in the table`() {
+        val productToCart =
+            CartItemRequest(
+                productId = 1,
+                quantity = 2,
+            )
+
+        val addProduct =
+            RestAssured.given().log().all()
+                .auth().oauth2(token)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(productToCart)
+                .`when`().post("/api/user/wishes")
+                .then().log().all().extract()
+
+        Assertions.assertThat(addProduct.statusCode()).isEqualTo(HttpStatus.OK.value())
+        val historyEntries = cartHistoryJpaRepository.findAll()
+        Assertions.assertThat(historyEntries).anySatisfy {
+            Assertions.assertThat(it.product.id).isEqualTo(productToCart.productId)
+            Assertions.assertThat(it.quantity).isEqualTo(productToCart.quantity)
+            Assertions.assertThat(it.status).isEqualTo(CartHistoryStatus.ADDED)
+        }
     }
 }

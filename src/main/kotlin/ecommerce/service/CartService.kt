@@ -4,7 +4,9 @@ import ecommerce.dto.CartItemRequest
 import ecommerce.dto.CartItemResponse
 import ecommerce.exception.ElementNotFoundException
 import ecommerce.mapper.toDto
+import ecommerce.model.CartHistory
 import ecommerce.model.CartItem
+import ecommerce.repository.CartHistoryJpaRepository
 import ecommerce.repository.CartJpaRepository
 import ecommerce.repository.ProductJpaRepository
 import ecommerce.repository.getByIdOrThrow
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 class CartService(
     private val cartJpaRepository: CartJpaRepository,
     private val productJpaRepository: ProductJpaRepository,
+    private val cartHistoryJpaRepository: CartHistoryJpaRepository,
 ) {
     fun addOrUpdateCartItem(
         memberId: Long,
@@ -29,8 +32,12 @@ class CartService(
         val cart = cartJpaRepository.getByMemberId(memberId)
         val cartItem = CartItem(cart, product, request.quantity)
         cart.addOrUpdateCartItem(cartItem)
-        cartJpaRepository.save(cart)
-        return cartItem.toDto()
+
+        cartHistoryJpaRepository.save(CartHistory(cart.member, product, request.quantity))
+
+        return cart.cartProducts
+            .first { it.product.id == product.id }
+            .toDto()
     }
 
     fun getCartItems(
