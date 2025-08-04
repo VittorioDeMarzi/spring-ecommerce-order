@@ -10,6 +10,8 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import java.time.LocalDateTime
 
 @Entity
@@ -17,6 +19,7 @@ data class CartHistory(
     @ManyToOne(fetch = FetchType.LAZY)
     var member: Member,
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var product: Product,
     var quantity: Int,
     @Enumerated(EnumType.STRING)

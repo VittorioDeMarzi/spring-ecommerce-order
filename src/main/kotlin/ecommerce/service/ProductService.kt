@@ -81,8 +81,6 @@ class ProductService(
     fun deleteProduct(id: Long) {
         productJpaRepository.existsByIdOrThrow(id)
         try {
-            cartHistoryJpaRepository.deleteAllByProductId(id)
-            cartItemJpaRepository.deleteAllByProductId(id)
             productJpaRepository.deleteById(id)
         } catch (e: Exception) {
             throw ProductDeleteException("Product not found, id: $id", e)
