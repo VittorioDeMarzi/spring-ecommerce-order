@@ -12,22 +12,31 @@ import jakarta.persistence.OneToOne
 data class Cart(
     @OneToOne(cascade = [CascadeType.PERSIST])
     val member: Member,
-    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "cart")
-    val cartProducts: MutableList<CartItem> = mutableListOf<CartItem>(),
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "cart", orphanRemoval = true)
+    val cartProducts: MutableList<CartItem> = mutableListOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
     fun addOrUpdateCartItem(cartItem: CartItem) {
         val presentProduct =
-            cartProducts.firstOrNull { it.cart.id == cartItem.cart.id && it.product.id == cartItem.product.id }
+            cartProducts.firstOrNull { it.product.id == cartItem.product.id }
         when (presentProduct) {
-            null -> cartProducts.add(cartItem)
+            null -> {
+                cartProducts.add(cartItem)
+                cartItem.cart = this
+            }
             else -> presentProduct.quantity = cartItem.quantity
         }
     }
 
     fun deleteCartProduct(productId: Long): Boolean {
-        return cartProducts.removeIf { it.product.id == productId }
+        return cartProducts
+            .removeIf { cartItem ->
+                (cartItem.product.id == productId)
+                    .also {
+                        if (it) cartItem.cart = null
+                    }
+            }
     }
 }

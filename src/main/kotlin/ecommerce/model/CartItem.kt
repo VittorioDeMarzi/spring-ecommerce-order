@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 data class CartItem(
     @ManyToOne
     @JoinColumn(name = "cart_id")
-    var cart: Cart,
+    var cart: Cart?,
     @ManyToOne
     @JoinColumn(name = "product_id")
     val product: Product,
