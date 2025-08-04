@@ -1,10 +1,12 @@
 package ecommerce.e2e
 
+import ecommerce.dto.CartItemRequest
 import ecommerce.dto.LoginRequest
 import ecommerce.dto.OptionDto
 import ecommerce.dto.ProductRequest
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
+import io.restassured.specification.RequestSpecification
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.jupiter.api.BeforeEach
@@ -19,6 +21,7 @@ import org.springframework.test.annotation.DirtiesContext
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AdminControllerTest {
     lateinit var token: String
+    lateinit var auth: RequestSpecification
 
     @BeforeEach
     fun setUp() {
@@ -36,14 +39,16 @@ class AdminControllerTest {
                 .then().extract()
 
         token = response.body().jsonPath().getString("token")
+        auth =
+            RestAssured.given().log().all()
+                .auth().oauth2(token)
+                .accept(ContentType.JSON)
     }
 
     @Test
     fun getAllProducts() {
         val response =
-            RestAssured.given().log().all()
-                .auth().oauth2(token)
-                .accept(ContentType.JSON)
+            auth
                 .`when`().get("/api/admin/products")
                 .then().log().all().extract()
 
@@ -56,9 +61,7 @@ class AdminControllerTest {
     @Test
     fun getProductById() {
         val response =
-            RestAssured.given().log().all()
-                .auth().oauth2(token)
-                .accept(ContentType.JSON)
+            auth
                 .`when`().get("/api/admin/products/1")
                 .then().log().all().extract()
 
@@ -78,9 +81,7 @@ class AdminControllerTest {
             )
 
         val response =
-            RestAssured.given().log().all()
-                .auth().oauth2(token)
-                .accept(ContentType.JSON)
+            auth
                 .contentType(ContentType.JSON)
                 .body(productRequest)
                 .post("/api/admin/products")
@@ -105,9 +106,7 @@ class AdminControllerTest {
             )
 
         val response =
-            RestAssured.given().log().all()
-                .auth().oauth2(token)
-                .accept(ContentType.JSON)
+            auth
                 .contentType(ContentType.JSON)
                 .body(productRequest)
                 .patch("/api/admin/products/1")
@@ -122,11 +121,9 @@ class AdminControllerTest {
     @Test
     fun deleteProduct() {
         val response =
-            RestAssured.given().log().all()
-                .auth().oauth2(token)
-                .accept(ContentType.JSON)
+            auth
                 .contentType(ContentType.JSON)
-                .delete("/api/admin/products/5")
+                .delete("/api/admin/products/1")
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value())
@@ -146,9 +143,7 @@ class AdminControllerTest {
         val optionRequest = OptionDto("newOptionTest", 10)
 
         val response =
-            RestAssured.given().log().all()
-                .auth().oauth2(token)
-                .accept(ContentType.JSON)
+            auth
                 .contentType(ContentType.JSON)
                 .body(optionRequest)
                 .post("/api/admin/products/add/option/1")
@@ -160,5 +155,41 @@ class AdminControllerTest {
         val array = json.getJSONArray("options")
         assertThat(array.length()).isEqualTo(2)
         assertThat(array.getJSONObject(1).getString("name")).isEqualTo("newOptionTest")
+    }
+
+    @Test
+    fun `delete product even if is in a cart and in the cart history`() {
+        val addItemToCart =
+            auth
+                .contentType(ContentType.JSON)
+                .body(CartItemRequest(1, 5))
+                .post("/api/user/wishes")
+                .then().log().all().extract()
+
+        val response =
+            auth
+                .contentType(ContentType.JSON)
+                .delete("/api/admin/products/1")
+                .then().log().all().extract()
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value())
+
+        val deleted =
+            auth
+                .`when`().get("/api/admin/products/1")
+                .then().log().all().extract()
+
+        assertThat(deleted.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value())
+    }
+
+    @Test
+    fun `should throw and respond with 404 if delete a not existing product`() {
+        val response =
+            auth
+                .contentType(ContentType.JSON)
+                .delete("/api/admin/products/100")
+                .then().log().all().extract()
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value())
     }
 }
