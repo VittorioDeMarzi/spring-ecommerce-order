@@ -15,7 +15,7 @@ data class Product(
     @Column(nullable = false)
     val price: Double,
     val imageUrl: String,
-    @OneToMany(mappedBy = "product", cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+    @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL])
     val options: MutableList<Option> = mutableListOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
