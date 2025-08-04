@@ -50,10 +50,10 @@ class ProductService(
     fun createProduct(productRequest: ProductRequest): ProductResponse {
         productJpaRepository.existsByNameOrThrow(productRequest.name)
         try {
-            val newProduct = productJpaRepository.save(productRequest.toEntity())
+            val newProduct = productRequest.toEntity()
             newProduct.options.forEach { it.product = newProduct }
-            optionJpaRepository.saveAll(newProduct.options)
-            return newProduct.toDto()
+            val savedProduct = productJpaRepository.save(newProduct)
+            return savedProduct.toDto()
         } catch (e: Exception) {
             throw ProductCreationException("Failed to create product", e)
         }
