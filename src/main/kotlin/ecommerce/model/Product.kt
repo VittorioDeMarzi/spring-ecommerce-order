@@ -22,7 +22,7 @@ data class Product(
     val id: Long = 0L,
 ) {
     fun addOption(option: Option) {
-        require(options.none { it.name == option.name })
+        require(options.none { it.name == option.name }) { "Option name already exist in the product" }
         options.add(option)
         option.product = this
     }

@@ -1,5 +1,6 @@
 package ecommerce.exception
 
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
+    private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
+
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationError(ex: MethodArgumentNotValidException): ResponseEntity<Map<String, String>> {
         val errors =
@@ -63,7 +66,10 @@ class GlobalExceptionHandler {
         status: HttpStatus,
         ex: RuntimeException,
     ): ResponseEntity<ErrorMessageModel> {
-        println("Exception caught: ${ex.message},  $ex")
+        logger.error("Exception caught: ${ex.message}", ex)
+        ex.cause?.let { cause ->
+            logger.error("Caused by: ${cause.message}", cause)
+        }
         val errorMessage = ErrorMessageModel(status.value(), ex.message)
         return ResponseEntity(errorMessage, status)
     }
