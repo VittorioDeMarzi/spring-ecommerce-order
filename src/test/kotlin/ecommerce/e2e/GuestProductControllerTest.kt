@@ -43,4 +43,18 @@ class GuestProductControllerTest {
         val productName = response.body().jsonPath().getString("name")
         Assertions.assertThat(productName).isEqualTo("Espresso")
     }
+
+    @Test
+    fun `should respond with 404 if product not found`() {
+        val response =
+            RestAssured
+                .given().log().all()
+                .`when`()
+                .request("GET", "/api/products/100")
+                .then()
+                .extract()
+                .response()
+
+        Assertions.assertThat(response.statusCode).isEqualTo(HttpStatus.NOT_FOUND.value())
+    }
 }
