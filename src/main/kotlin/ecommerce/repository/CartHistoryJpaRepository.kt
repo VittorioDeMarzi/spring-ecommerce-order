@@ -39,4 +39,6 @@ interface CartHistoryJpaRepository : JpaRepository<CartHistory, Long> {
     fun getTop5ActiveUsers(
         @Param("since") since: LocalDateTime,
     ): List<ActiveUsersResponse>
+
+    fun deleteAllByProductId(productId: Long)
 }
