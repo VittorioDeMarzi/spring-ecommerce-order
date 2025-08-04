@@ -87,6 +87,7 @@ class ProductService(
     ): ProductResponse {
         val product = productJpaRepository.getByIdOrThrow(id)
         product.addOption(option.toEntity())
+        productJpaRepository.save(product)
         return product.toDto()
     }
 }
