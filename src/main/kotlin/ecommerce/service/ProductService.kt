@@ -9,6 +9,7 @@ import ecommerce.exception.ProductDeleteException
 import ecommerce.exception.ProductUpdateException
 import ecommerce.mapper.toDto
 import ecommerce.mapper.toEntity
+import ecommerce.repository.OptionJpaRepository
 import ecommerce.repository.ProductJpaRepository
 import ecommerce.repository.existsByIdOrThrow
 import ecommerce.repository.existsByNameOrThrow
@@ -19,7 +20,10 @@ import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
 @Service
-class ProductService(private val productJpaRepository: ProductJpaRepository) {
+class ProductService(
+    private val productJpaRepository: ProductJpaRepository,
+    private val optionJpaRepository: OptionJpaRepository,
+) {
     fun findById(id: Long): ProductResponse {
         val product = productJpaRepository.getByIdOrThrow(id)
         return product.toDto()
@@ -40,7 +44,10 @@ class ProductService(private val productJpaRepository: ProductJpaRepository) {
     fun createProduct(productRequest: ProductRequest): ProductResponse {
         productJpaRepository.existsByNameOrThrow(productRequest.name)
         try {
-            return productJpaRepository.save(productRequest.toEntity()).toDto()
+            val newProduct = productJpaRepository.save(productRequest.toEntity())
+            newProduct.options.forEach { it.product = newProduct }
+            optionJpaRepository.saveAll(newProduct.options)
+            return newProduct.toDto()
         } catch (e: Exception) {
             throw ProductCreationException("Failed to create product", e)
         }
