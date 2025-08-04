@@ -24,6 +24,7 @@ data class Product(
     fun addOption(option: Option) {
         require(options.none { it.name == option.name })
         options.add(option)
+        option.product = this
     }
 
     init {
