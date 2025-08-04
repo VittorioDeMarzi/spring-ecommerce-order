@@ -59,6 +59,45 @@ class CartControllerTest {
                 .then().log().all().extract()
 
         Assertions.assertThat(addProduct.statusCode()).isEqualTo(HttpStatus.OK.value())
+        val json = JSONObject(addProduct.asString())
+        assertThat(json.get("productName")).isEqualTo("Espresso")
+        assertThat(json.get("quantity")).isEqualTo(2)
+    }
+
+    @Test
+    fun `update quantity if product already in cart`() {
+        val productToCart =
+            CartItemRequest(
+                productId = 1,
+                quantity = 2,
+            )
+
+        RestAssured.given().log().all()
+            .auth().oauth2(token)
+            .contentType(ContentType.JSON)
+            .accept(ContentType.JSON)
+            .body(productToCart)
+            .`when`().post("/api/user/wishes")
+            .then().log().all().extract()
+
+        val newProduct =
+            CartItemRequest(
+                productId = 1,
+                quantity = 10,
+            )
+
+        val response =
+            RestAssured.given().log().all()
+                .auth().oauth2(token)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(newProduct)
+                .`when`().post("/api/user/wishes")
+                .then().log().all().extract()
+
+        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
+        val json = JSONObject(response.asString())
+        assertThat(json.get("quantity")).isEqualTo(10)
     }
 
     @Test
