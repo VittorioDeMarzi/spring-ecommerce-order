@@ -3,7 +3,7 @@
 This project is the continuation of the previous ecommerce-product mission.
 In this step, the codebase will integrate Spring Data JPA for database interactions, replacing the previous JDBC-based implementation.
 
-## Previous Mission – spring-ecommerce-product
+## Step1 – spring-ecommerce-product
 ### Step 1-1 — Basic Product API (In-Memory Storage)
 - Implemented HTTP API for CRUD operations on products.
 - Stored data in memory using Kotlin MutableMap.
@@ -103,5 +103,42 @@ Content-Type: application/json
    - No need to create a separate HTTP API. 
    - This logic should be implemented in the Service class or Entity class for future reuse.
 
+# Step2 - HTTP Clients
+## Step 2-1 - External API: Place Order with Stripe
 
+### Functional Requirements
+When placing an order with a selected product option and quantity:
 
+1. **Stock Update**
+    - [ ] The stock of the selected product option must be decreased according to the ordered quantity.
+
+2. **Cart Cleanup**
+   - [ ] If the ordered product exists in the user’s cart, it should be removed from the cart after placing the order.
+
+3. **Stripe Payment Integration**
+    - [ ] Use Stripe’s **Payment Intent API** to create and confirm a payment.
+    - [ ] Use the **sandbox secret key** for development and testing.
+
+4. **Payment Failure Handling**
+    - [ ] If the payment approval API call fails, handle the error safely.
+    - [ ] Inform the user clearly about the failure reason.
+    - [ ] Possible failure reasons include:
+        - [ ] Expired payment session
+        - [ ] Invalid payment method
+        - [ ] Insufficient balance
+        - [ ] Any other error returned by Stripe
+
+---
+
+## ✨ Features
+- Integration with **Stripe Payment Intent API** for secure and real-time payment processing.
+- Automatic **stock deduction** for the purchased product option.
+- Automatic **cart item removal** when the ordered product is purchased.
+- Comprehensive **error handling** with user-friendly failure messages.
+- Support for **Stripe test cards** to simulate successful and failed payments during development.
+
+---
+
+## 🔗 References
+- [Stripe API Documentation](https://stripe.com/docs/api/payment_intents)
+- [Stripe Test Cards](https://stripe.com/docs/testing#international-cards)
