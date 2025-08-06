@@ -15,7 +15,6 @@ class StripeClientTest {
 
     @Test
     fun test1() {
-        println("STRIPE_SECRET_KEY: ${System.getenv("STRIPE_SECRET_KEY")}")
         val actual =
             stripeClient.createCheckoutSession(
                 PaymentRequest(
@@ -25,5 +24,6 @@ class StripeClientTest {
                 ),
             )
         assertThat(actual).isNotNull
+        assertThat(actual?.amount).isEqualTo(1000)
     }
 }

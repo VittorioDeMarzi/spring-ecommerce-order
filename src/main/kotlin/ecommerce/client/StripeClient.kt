@@ -2,6 +2,7 @@ package ecommerce.client
 
 import ecommerce.configuration.StripeProperties
 import ecommerce.dto.PaymentRequest
+import ecommerce.dto.PaymentResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -13,7 +14,7 @@ class StripeClient(
 ) {
     private val restClient = RestClient.create()
 
-    fun createCheckoutSession(req: PaymentRequest): String? {
+    fun createCheckoutSession(req: PaymentRequest): PaymentResponse? {
         val body =
             listOf(
                 "amount=${req.amount}",
@@ -33,7 +34,7 @@ class StripeClient(
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .body(body)
                     .retrieve()
-                    .toEntity(String::class.java)
+                    .toEntity(PaymentResponse::class.java)
 
             response.body
         } catch (e: Exception) {
