@@ -7,13 +7,14 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
+import java.math.BigDecimal
 
 @Entity
 data class Product(
     @Column(nullable = false, unique = true)
     val name: String,
     @Column(nullable = false)
-    val price: Double,
+    val price: BigDecimal,
     val imageUrl: String,
     @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], orphanRemoval = true)
     val options: MutableList<Option> = mutableListOf(),

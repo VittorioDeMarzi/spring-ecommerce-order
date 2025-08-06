@@ -10,6 +10,6 @@ fun CartItem.toDto(): CartItemResponse =
         product.id,
         productName = product.name,
         quantity = quantity,
-        productPrice = product.price,
+        productPrice = product.price.toDouble(),
         productImageUrl = product.imageUrl,
     )

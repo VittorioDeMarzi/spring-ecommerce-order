@@ -67,7 +67,7 @@ class ProductService(
         val newProduct =
             product.copy(
                 name = productRequest.name ?: product.name,
-                price = productRequest.price ?: product.price,
+                price = productRequest.price?.toBigDecimal() ?: product.price,
                 imageUrl = productRequest.imageUrl ?: product.imageUrl,
             )
         try {
