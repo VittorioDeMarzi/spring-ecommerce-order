@@ -9,6 +9,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "customer_orders")
@@ -17,6 +18,7 @@ class Order(
     val member: Member,
     @OneToMany(cascade = [CascadeType.ALL])
     val orderItems: List<OrderItem>,
+    val timeAtPurchase: LocalDateTime = LocalDateTime.now(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
