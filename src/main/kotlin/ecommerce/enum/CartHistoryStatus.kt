@@ -1,4 +1,4 @@
-package ecommerce.dto.enum
+package ecommerce.enum
 
 enum class CartHistoryStatus {
     ADDED,

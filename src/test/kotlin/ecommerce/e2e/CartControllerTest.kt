@@ -2,7 +2,7 @@ package ecommerce.e2e
 
 import ecommerce.dto.CartItemRequest
 import ecommerce.dto.RegistrationRequest
-import ecommerce.dto.enum.CartHistoryStatus
+import ecommerce.enum.CartHistoryStatus
 import ecommerce.repository.CartHistoryJpaRepository
 import io.restassured.RestAssured
 import io.restassured.http.ContentType

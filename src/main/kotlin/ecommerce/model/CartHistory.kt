@@ -1,6 +1,6 @@
 package ecommerce.model
 
-import ecommerce.dto.enum.CartHistoryStatus
+import ecommerce.enum.CartHistoryStatus
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
