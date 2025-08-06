@@ -20,7 +20,7 @@ data class CartHistory(
     var member: Member,
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    var product: Product,
+    var option: Option,
     var quantity: Int,
     @Enumerated(EnumType.STRING)
     val status: CartHistoryStatus = CartHistoryStatus.ADDED,

@@ -7,9 +7,9 @@ class CartItemMapper
 
 fun CartItem.toDto(): CartItemResponse =
     CartItemResponse(
-        product.id,
-        productName = product.name,
+        option.product!!.id,
+        productName = option.product!!.name,
         quantity = quantity,
-        productPrice = product.price.toDouble(),
-        productImageUrl = product.imageUrl,
+        productPrice = option.product!!.price.toDouble(),
+        productImageUrl = option.product!!.imageUrl,
     )

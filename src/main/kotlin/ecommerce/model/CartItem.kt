@@ -17,9 +17,9 @@ data class CartItem(
     @JoinColumn(name = "cart_id")
     var cart: Cart?,
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "option_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    val product: Product,
+    val option: Option,
     var quantity: Int,
     @CreationTimestamp
     var createdAt: LocalDateTime = LocalDateTime.now(),

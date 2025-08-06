@@ -8,6 +8,7 @@ import ecommerce.model.CartHistory
 import ecommerce.model.CartItem
 import ecommerce.repository.CartHistoryJpaRepository
 import ecommerce.repository.CartJpaRepository
+import ecommerce.repository.OptionJpaRepository
 import ecommerce.repository.ProductJpaRepository
 import ecommerce.repository.getByIdOrThrow
 import ecommerce.repository.getByMemberId
@@ -23,20 +24,21 @@ class CartService(
     private val cartJpaRepository: CartJpaRepository,
     private val productJpaRepository: ProductJpaRepository,
     private val cartHistoryJpaRepository: CartHistoryJpaRepository,
+    private val optionJpaRepository: OptionJpaRepository,
 ) {
     fun addOrUpdateCartItem(
         memberId: Long,
         request: CartItemRequest,
     ): CartItemResponse {
-        val product = productJpaRepository.getByIdOrThrow(request.productId)
+        val option = optionJpaRepository.getByIdOrThrow(request.optionId)
         val cart = cartJpaRepository.getByMemberId(memberId)
-        val cartItem = CartItem(cart, product, request.quantity)
+        val cartItem = CartItem(cart, option, request.quantity)
         cart.addOrUpdateCartItem(cartItem)
 
-        cartHistoryJpaRepository.save(CartHistory(cart.member, product, request.quantity))
+        cartHistoryJpaRepository.save(CartHistory(cart.member, option, request.quantity))
 
         return cart.cartProducts
-            .first { it.product.id == product.id }
+            .first { it.option.id == option.id }
             .toDto()
     }
 

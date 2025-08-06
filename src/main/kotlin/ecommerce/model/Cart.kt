@@ -19,21 +19,21 @@ data class Cart(
     val id: Long = 0L,
 ) {
     fun addOrUpdateCartItem(cartItem: CartItem) {
-        val presentProduct =
-            cartProducts.firstOrNull { it.product.id == cartItem.product.id }
-        when (presentProduct) {
+        val presentOption =
+            cartProducts.firstOrNull { it.option.id == cartItem.option.id }
+        when (presentOption) {
             null -> {
                 cartProducts.add(cartItem)
                 cartItem.cart = this
             }
-            else -> presentProduct.quantity = cartItem.quantity
+            else -> presentOption.quantity = cartItem.quantity
         }
     }
 
-    fun deleteCartProduct(productId: Long): Boolean {
+    fun deleteCartProduct(optionId: Long): Boolean {
         return cartProducts
             .removeIf { cartItem ->
-                (cartItem.product.id == productId)
+                (cartItem.option.id == optionId)
                     .also {
                         if (it) cartItem.cart = null
                     }
