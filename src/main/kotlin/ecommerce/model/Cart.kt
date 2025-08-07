@@ -7,6 +7,9 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
+import java.time.LocalDateTime
 
 @Entity
 data class Cart(
@@ -14,6 +17,10 @@ data class Cart(
     val member: Member,
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "cart", orphanRemoval = true)
     val cartProducts: MutableList<CartItem> = mutableListOf(),
+    @CreationTimestamp
+    var createdAt: LocalDateTime? = null,
+    @UpdateTimestamp
+    var lastUpdatedAt: LocalDateTime? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,

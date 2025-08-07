@@ -8,6 +8,9 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
+import java.time.LocalDateTime
 
 @Entity
 class Option(
@@ -18,6 +21,10 @@ class Option(
     @ManyToOne
     @JoinColumn(name = "product_id")
     var product: Product? = null,
+    @CreationTimestamp
+    var createdAt: LocalDateTime? = null,
+    @UpdateTimestamp
+    var lastUpdatedAt: LocalDateTime? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,

@@ -7,7 +7,10 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.math.BigDecimal
+import java.time.LocalDateTime
 
 @Entity
 data class Product(
@@ -18,6 +21,10 @@ data class Product(
     val imageUrl: String,
     @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], orphanRemoval = true)
     val options: MutableList<Option> = mutableListOf(),
+    @CreationTimestamp
+    var createdAt: LocalDateTime? = null,
+    @UpdateTimestamp
+    var lastUpdatedAt: LocalDateTime? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,

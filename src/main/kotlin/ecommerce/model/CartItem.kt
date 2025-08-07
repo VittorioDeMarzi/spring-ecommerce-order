@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
+import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 
 @Entity
@@ -22,7 +23,9 @@ data class CartItem(
     val option: Option,
     var quantity: Int,
     @CreationTimestamp
-    var createdAt: LocalDateTime = LocalDateTime.now(),
+    var createdAt: LocalDateTime? = null,
+    @UpdateTimestamp
+    var lastUpdatedAt: LocalDateTime? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
