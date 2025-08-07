@@ -23,8 +23,8 @@ data class Cart(
             cartProducts.firstOrNull { it.option.id == cartItem.option.id }
         when (presentOption) {
             null -> {
-                cartProducts.add(cartItem)
                 cartItem.cart = this
+                cartProducts.add(cartItem)
             }
             else -> presentOption.quantity = cartItem.quantity
         }

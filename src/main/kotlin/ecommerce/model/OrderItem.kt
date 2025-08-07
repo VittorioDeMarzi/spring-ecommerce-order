@@ -8,7 +8,7 @@ import java.math.BigDecimal
 
 @Entity
 class OrderItem(
-    val optionId: Long?,
+    val optionId: Long,
     val optionName: String,
     val priceAtPurchase: BigDecimal,
     val quantity: Int,

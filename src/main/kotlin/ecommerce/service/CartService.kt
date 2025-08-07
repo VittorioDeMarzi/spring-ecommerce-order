@@ -2,14 +2,12 @@ package ecommerce.service
 
 import ecommerce.dto.CartItemRequest
 import ecommerce.dto.CartItemResponse
-import ecommerce.exception.ElementNotFoundException
 import ecommerce.mapper.toDto
 import ecommerce.model.CartHistory
 import ecommerce.model.CartItem
 import ecommerce.repository.CartHistoryJpaRepository
 import ecommerce.repository.CartJpaRepository
 import ecommerce.repository.OptionJpaRepository
-import ecommerce.repository.ProductJpaRepository
 import ecommerce.repository.getByIdOrThrow
 import ecommerce.repository.getByMemberId
 import org.springframework.data.domain.Page
@@ -22,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class CartService(
     private val cartJpaRepository: CartJpaRepository,
-    private val productJpaRepository: ProductJpaRepository,
     private val cartHistoryJpaRepository: CartHistoryJpaRepository,
     private val optionJpaRepository: OptionJpaRepository,
 ) {
@@ -37,6 +34,7 @@ class CartService(
 
         cartHistoryJpaRepository.save(CartHistory(cart.member, option, request.quantity))
 
+        cartJpaRepository.save(cart)
         return cart.cartProducts
             .first { it.option.id == option.id }
             .toDto()
@@ -56,11 +54,10 @@ class CartService(
 
     fun deleteProductFromCart(
         memberId: Long,
-        productId: Long,
+        optionId: Long,
     ) {
         val cart = cartJpaRepository.getByMemberId(memberId)
-        val deleted = cart.deleteCartProduct(productId)
-        if (!deleted) throw ElementNotFoundException("Element not in the cart")
+        cart.deleteCartProduct(optionId)
         cartJpaRepository.save(cart)
     }
 }

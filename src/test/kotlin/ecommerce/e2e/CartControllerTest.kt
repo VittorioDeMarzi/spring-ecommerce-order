@@ -45,7 +45,7 @@ class CartControllerTest {
     fun addToCart() {
         val productToCart =
             CartItemRequest(
-                productId = 1,
+                optionId = 1,
                 quantity = 2,
             )
 
@@ -68,7 +68,7 @@ class CartControllerTest {
     fun `update quantity if product already in cart`() {
         val productToCart =
             CartItemRequest(
-                productId = 1,
+                optionId = 1,
                 quantity = 2,
             )
 
@@ -82,7 +82,7 @@ class CartControllerTest {
 
         val newProduct =
             CartItemRequest(
-                productId = 1,
+                optionId = 1,
                 quantity = 10,
             )
 
@@ -133,7 +133,7 @@ class CartControllerTest {
         val jsonObjectBefore = JSONObject(getResponse.asString())
         assertThat(jsonObjectBefore.get("totalElements")).isEqualTo(1)
 
-        val cartItemId = getResponse.body().jsonPath().getLong("content[0].productId")
+        val cartItemId = getResponse.body().jsonPath().getLong("content[0].id")
 
         val deleteResponse =
             RestAssured.given().log().all()
@@ -160,7 +160,7 @@ class CartControllerTest {
     fun `when product added to cart should add a new cart history element in the table`() {
         val productToCart =
             CartItemRequest(
-                productId = 1,
+                optionId = 1,
                 quantity = 2,
             )
 
@@ -176,7 +176,7 @@ class CartControllerTest {
         Assertions.assertThat(addProduct.statusCode()).isEqualTo(HttpStatus.OK.value())
         val historyEntries = cartHistoryJpaRepository.findAll()
         Assertions.assertThat(historyEntries).anySatisfy {
-            Assertions.assertThat(it.product.id).isEqualTo(productToCart.productId)
+            Assertions.assertThat(it.option.id).isEqualTo(productToCart.optionId)
             Assertions.assertThat(it.quantity).isEqualTo(productToCart.quantity)
             Assertions.assertThat(it.status).isEqualTo(CartHistoryStatus.ADDED)
         }
