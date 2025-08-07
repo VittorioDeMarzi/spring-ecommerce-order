@@ -1,7 +1,7 @@
 package ecommerce.stripe
 
 import ecommerce.client.StripeClient
-import ecommerce.dto.PaymentRequest
+import ecommerce.dto.OrderRequest
 import ecommerce.enum.Currency
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -17,11 +17,11 @@ class StripeClientTest {
     fun test1() {
         val actual =
             stripeClient.createCheckoutSession(
-                PaymentRequest(
-                    1000,
+                OrderRequest(
                     Currency.EUR,
                     "pm_card_visa",
                 ),
+                amount = 1000,
             )
         assertThat(actual).isNotNull
         assertThat(actual?.amount).isEqualTo(1000)

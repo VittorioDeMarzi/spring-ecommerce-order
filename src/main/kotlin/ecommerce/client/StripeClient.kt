@@ -1,7 +1,7 @@
 package ecommerce.client
 
 import ecommerce.configuration.StripeProperties
-import ecommerce.dto.PaymentRequest
+import ecommerce.dto.OrderRequest
 import ecommerce.dto.PaymentResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -14,10 +14,13 @@ class StripeClient(
 ) {
     private val restClient = RestClient.create()
 
-    fun createCheckoutSession(req: PaymentRequest): PaymentResponse? {
+    fun createCheckoutSession(
+        req: OrderRequest,
+        amount: Int,
+    ): PaymentResponse? {
         val body =
             listOf(
-                "amount=${req.amount}",
+                "amount=$amount",
                 "currency=${req.currency}",
                 "payment_method=${req.paymentMethod}",
                 "confirm=true",
