@@ -47,7 +47,7 @@ class StripeClient(
         } catch (e: RestClientResponseException) {
             val errorInfo = parseStripeError(e.responseBodyAsString)
             throw StripePaymentException(
-                "Stripe error: ${errorInfo.message} (code: ${errorInfo.code}) \nDecline Code: ${errorInfo.declineCode}",
+                "Stripe error: ${errorInfo.message} (code: ${errorInfo.code})",
                 e,
             )
         } catch (e: Exception) {
