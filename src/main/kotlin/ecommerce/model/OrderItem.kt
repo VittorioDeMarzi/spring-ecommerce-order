@@ -11,6 +11,7 @@ import java.time.LocalDateTime
 @Entity
 class OrderItem(
     val optionId: Long,
+    val productName: String,
     val optionName: String,
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,
@@ -19,5 +20,5 @@ class OrderItem(
     val quantity: Int,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long = 0L,
 )
