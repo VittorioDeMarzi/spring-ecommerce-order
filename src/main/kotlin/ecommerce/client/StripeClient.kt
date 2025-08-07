@@ -33,7 +33,6 @@ class StripeClient(
             ).joinToString("&")
 
         return try {
-            println(stripeProperties.secretKey)
             val response =
                 restClient.post()
                     .uri("https://api.stripe.com/v1/payment_intents")
