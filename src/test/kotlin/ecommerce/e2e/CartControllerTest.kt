@@ -133,13 +133,11 @@ class CartControllerTest {
         val jsonObjectBefore = JSONObject(getResponse.asString())
         assertThat(jsonObjectBefore.get("totalElements")).isEqualTo(1)
 
-        val cartItemId = getResponse.body().jsonPath().getLong("content[0].id")
-
         val deleteResponse =
             RestAssured.given().log().all()
                 .auth().oauth2(token)
                 .accept(ContentType.JSON)
-                .`when`().delete("/api/user/wishes/$cartItemId")
+                .`when`().delete("/api/user/wishes/1")
                 .then().log().all().extract()
 
         assertThat(deleteResponse.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value())
