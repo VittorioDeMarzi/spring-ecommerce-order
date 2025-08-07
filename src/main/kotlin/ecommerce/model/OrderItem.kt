@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Entity
@@ -18,6 +19,7 @@ class OrderItem(
     @UpdateTimestamp
     var lastUpdatedAt: LocalDateTime? = null,
     val quantity: Int,
+    val price: BigDecimal,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
