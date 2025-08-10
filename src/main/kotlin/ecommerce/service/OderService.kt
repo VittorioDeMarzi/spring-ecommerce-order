@@ -1,10 +1,10 @@
 package ecommerce.service
 
-import ecommerce.client.StripeClient
 import ecommerce.dto.OrderRequest
 import ecommerce.dto.OrderResponse
 import ecommerce.dto.PaymentResponse
 import ecommerce.enum.OrderStatus
+import ecommerce.enum.PaymentStatus
 import ecommerce.exception.CartException
 import ecommerce.mapper.toOrderItem
 import ecommerce.mapper.toOrderResponse
@@ -13,18 +13,16 @@ import ecommerce.model.Order
 import ecommerce.repository.CartJpaRepository
 import ecommerce.repository.OrderJpaRepository
 import ecommerce.repository.getByMemberId
-import org.hibernate.service.spi.ServiceException
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
 
 @Transactional
 @Service
 class OderService(
     private val cartJpaRepository: CartJpaRepository,
-    private val stripeClient: StripeClient,
     private val orderJpaRepository: OrderJpaRepository,
-    private val cartService: CartService,
+    private val paymentService: PaymentService,
 ) {
     fun processOrder(
         memberId: Long,
@@ -35,35 +33,36 @@ class OderService(
             throw CartException("Cart is empty")
         }
         val amount = cart.totalAmount
-        println("Total amount: $amount")
-        val paymentIntent =
-            stripeClient.createCheckoutSession(request, amount.multiply(BigDecimal.valueOf(100)).toInt())
-                ?: throw ServiceException("Payment Failed")
-
-        val newOrder = placeOrder(cart, memberId, paymentIntent)
-        if (paymentIntent.status == "succeeded") {
-            updateOrderStatus(newOrder, paymentIntent)
-            cart.cleanCart()
-        }
+        val paymentResponse = paymentService.createPaymentIntent(request, amount)
+        val newOrder = placeOrder(cart, memberId, paymentResponse)
+        updatePaymentAndOrderStatus(newOrder, paymentResponse, cart)
         return newOrder.toOrderResponse()
     }
 
-    private fun updateOrderStatus(
+    private fun updatePaymentAndOrderStatus(
         newOrder: Order,
-        paymentIntent: PaymentResponse,
+        paymentResponse: PaymentResponse,
+        cart: Cart,
     ) {
-        newOrder.status == OrderStatus.PAID
-        newOrder.paymentIntentId = paymentIntent.id
+        if (paymentResponse.status == "succeeded") {
+            newOrder.updateStatus(OrderStatus.PAID)
+            paymentService.updatePaymentStatus(paymentResponse.id, PaymentStatus.SUCCESS)
+            cart.cleanCart()
+        } else {
+            newOrder.updateStatus(OrderStatus.FAILED)
+            paymentService.updatePaymentStatus(paymentResponse.id, PaymentStatus.FAILED)
+        }
+
         orderJpaRepository.save(newOrder)
     }
 
     private fun placeOrder(
         cart: Cart,
         memberId: Long,
-        paymentIntent: PaymentResponse,
+        paymentResponse: PaymentResponse,
     ): Order {
-        val amount = BigDecimal.valueOf(paymentIntent.amount.toLong(), 2)
+        val amount = BigDecimal.valueOf(paymentResponse.amount.toLong(), 2)
         val orderItems = cart.cartProducts.map { it.toOrderItem() }
-        return orderJpaRepository.save(Order(memberId, orderItems, amount))
+        return orderJpaRepository.save(Order(memberId, orderItems, amount, paymentResponse.id))
     }
 }
