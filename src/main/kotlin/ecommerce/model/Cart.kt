@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 
 @Entity
 data class Cart(
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
     val member: Member,
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "cart", orphanRemoval = true)
     val cartProducts: MutableList<CartItem> = mutableListOf(),
