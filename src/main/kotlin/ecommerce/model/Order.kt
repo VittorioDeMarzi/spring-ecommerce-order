@@ -22,14 +22,18 @@ class Order(
     @OneToMany(cascade = [CascadeType.ALL])
     val orderItems: List<OrderItem>,
     val totalAmount: BigDecimal,
+    var paymentIntentId: String? = null,
     @Enumerated(EnumType.STRING)
-    val status: OrderStatus = OrderStatus.PENDING,
+    var status: OrderStatus = OrderStatus.PENDING,
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,
     @UpdateTimestamp
     var lastUpdatedAt: LocalDateTime? = null,
-    var paymentIntentId: String? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
-)
+) {
+    fun updateStatus(newStatus: OrderStatus) {
+        this.status = newStatus
+    }
+}
