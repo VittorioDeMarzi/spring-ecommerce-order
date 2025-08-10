@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import ecommerce.configuration.StripeProperties
 import ecommerce.dto.OrderRequest
 import ecommerce.dto.PaymentResponse
+import ecommerce.exception.GlobalExceptionHandler
 import ecommerce.exception.StripeErrorInfo
 import ecommerce.exception.StripePaymentException
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -17,6 +19,8 @@ class StripeClient(
     private val stripeProperties: StripeProperties,
 ) {
     private val restClient = RestClient.create()
+
+    private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
 
     fun createCheckoutSession(
         req: OrderRequest,
@@ -32,6 +36,13 @@ class StripeClient(
                 "automatic_payment_methods[allow_redirects]=never",
             ).joinToString("&")
 
+        logger.debug(
+            "Creating PaymentIntent amount={} {} method={}",
+            amount,
+            req.currency,
+            req.paymentMethod,
+        )
+
         return try {
             val response =
                 restClient.post()
@@ -42,14 +53,18 @@ class StripeClient(
                     .retrieve()
                     .toEntity(PaymentResponse::class.java)
 
-            response.body
+            val responseBody = requireNotNull(response.body)
+            logger.info("PaymentIntent created id={} status={}", responseBody.id, responseBody.status)
+            responseBody
         } catch (e: RestClientResponseException) {
             val errorInfo = parseStripeError(e.responseBodyAsString)
+            logger.error("Stripe error status={} code={} msg={}", e.statusCode, errorInfo.code, errorInfo.message)
             throw StripePaymentException(
                 "Stripe error: ${errorInfo.message} (code: ${errorInfo.code})",
                 e,
             )
         } catch (e: Exception) {
+            logger.error("Unexpected error calling Stripe: {}", e.message, e)
             throw StripePaymentException("Unexpected Stripe error: ${e.message}", e)
         }
     }
