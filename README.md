@@ -110,23 +110,22 @@ Content-Type: application/json
 When placing an order with a selected product option and quantity:
 
 1. **Stock Update**
-    - [ ] The stock of the selected product option must be decreased according to the ordered quantity.
+    - [x] The stock of the selected product option must be decreased according to the ordered quantity.
 
 2. **Cart Cleanup**
-   - [ ] If the ordered product exists in the user’s cart, it should be removed from the cart after placing the order.
+   - [x] If the ordered product exists in the user’s cart, it should be removed from the cart after placing the order.
 
 3. **Stripe Payment Integration**
-    - [ ] Use Stripe’s **Payment Intent API** to create and confirm a payment.
-    - [ ] Use the **sandbox secret key** for development and testing.
+    - [x] Use Stripe’s **Payment Intent API** to create and confirm a payment.
+    - [x] Use the **sandbox secret key** for development and testing.
 
 4. **Payment Failure Handling**
-    - [ ] If the payment approval API call fails, handle the error safely.
-    - [ ] Inform the user clearly about the failure reason.
-    - [ ] Possible failure reasons include:
-        - [ ] Expired payment session
-        - [ ] Invalid payment method
-        - [ ] Insufficient balance
-        - [ ] Any other error returned by Stripe
+    - [x] If the payment approval API call fails, handle the error safely.
+    - [x] Inform the user clearly about the failure reason.
+    - [x] Possible failure reasons include:
+        - [x] Expired payment session
+        - [x] Invalid payment method
+        - [x] Insufficient balance
 
 ---
 
@@ -142,3 +141,21 @@ When placing an order with a selected product option and quantity:
 ## 🔗 References
 - [Stripe API Documentation](https://stripe.com/docs/api/payment_intents)
 - [Stripe Test Cards](https://stripe.com/docs/testing#international-cards)
+
+## Step 2-2 - Order
+### Functional Requirements
+
+1. **Order**
+   - [x] Implement the "Orders" feature
+     - Order date and time 
+     - Order status 
+     - Purchased items 
+     - Checkout session Id (issued by stripe)
+   - [x] Implement the "Payment" feature
+     - Payment amount
+     - currency
+     - paymentMethod
+     - Checkout session Id (issued by stripe)
+
+2. **Error**
+   - [x] Error handling: validate amount/currency; map Stripe errors clearly; return appropriate HTTP statuses and error messages.
