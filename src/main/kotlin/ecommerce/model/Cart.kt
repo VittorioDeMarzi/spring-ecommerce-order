@@ -2,6 +2,7 @@ package ecommerce.model
 
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -9,11 +10,12 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Entity
 data class Cart(
-    @OneToOne(cascade = [CascadeType.PERSIST])
+    @OneToOne(fetch = FetchType.LAZY)
     val member: Member,
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "cart", orphanRemoval = true)
     val cartProducts: MutableList<CartItem> = mutableListOf(),
@@ -25,6 +27,9 @@ data class Cart(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
+    val totalAmount: BigDecimal
+        get() = cartProducts.sumOf { it.option.product!!.price.multiply(BigDecimal(it.quantity)) }
+
     fun addOrUpdateCartItem(cartItem: CartItem) {
         val presentOption =
             cartProducts.firstOrNull { it.option.id == cartItem.option.id }
@@ -45,5 +50,10 @@ data class Cart(
                         if (it) cartItem.cart = null
                     }
             }
+    }
+
+    fun cleanCart() {
+        cartProducts.forEach { it.cart = null }
+        cartProducts.clear()
     }
 }
