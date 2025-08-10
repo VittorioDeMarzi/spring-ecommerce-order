@@ -3,7 +3,9 @@ package ecommerce.service
 import ecommerce.client.StripeClient
 import ecommerce.dto.OrderRequest
 import ecommerce.dto.OrderResponse
+import ecommerce.dto.PaymentResponse
 import ecommerce.enum.OrderStatus
+import ecommerce.exception.CartException
 import ecommerce.mapper.toOrderItem
 import ecommerce.mapper.toOrderResponse
 import ecommerce.model.Cart
@@ -29,24 +31,38 @@ class OderService(
         request: OrderRequest,
     ): OrderResponse {
         val cart = cartJpaRepository.getByMemberId(memberId)
+        if (cart.cartProducts.isEmpty()) {
+            throw CartException("Cart is empty")
+        }
         val amount = cart.totalAmount
+        println("Total amount: $amount")
         val paymentIntent =
             stripeClient.createCheckoutSession(request, amount.multiply(BigDecimal.valueOf(100)).toInt())
                 ?: throw ServiceException("Payment Failed")
 
-        val newOrder = placeOrder(cart, memberId)
+        val newOrder = placeOrder(cart, memberId, paymentIntent)
         if (paymentIntent.status == "succeeded") {
-            newOrder.status == OrderStatus.PAID
+            updateOrderStatus(newOrder, paymentIntent)
             cart.cleanCart()
         }
         return newOrder.toOrderResponse()
     }
 
+    private fun updateOrderStatus(
+        newOrder: Order,
+        paymentIntent: PaymentResponse,
+    ) {
+        newOrder.status == OrderStatus.PAID
+        newOrder.paymentIntentId = paymentIntent.id
+        orderJpaRepository.save(newOrder)
+    }
+
     private fun placeOrder(
         cart: Cart,
         memberId: Long,
+        paymentIntent: PaymentResponse,
     ): Order {
-        val amount = cart.cartProducts.sumOf { it.option.product!!.price }
+        val amount = BigDecimal.valueOf(paymentIntent.amount.toLong(), 2)
         val orderItems = cart.cartProducts.map { it.toOrderItem() }
         return orderJpaRepository.save(Order(memberId, orderItems, amount))
     }

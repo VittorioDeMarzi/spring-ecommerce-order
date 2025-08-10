@@ -28,6 +28,7 @@ class GlobalExceptionHandler {
             RuntimeException::class,
             InsufficientQuantityException::class,
             IllegalArgumentException::class,
+            CartException::class,
         ],
     )
     fun handleBadRequest(ex: RuntimeException) = buildErrorResponse(HttpStatus.BAD_REQUEST, ex)
