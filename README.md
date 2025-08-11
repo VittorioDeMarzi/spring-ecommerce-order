@@ -165,14 +165,14 @@ This step focuses on deploying the mission eCommerce so it can interact with the
 The process is automated using a shell deployment script.
 
 ### Features
-- [ ] Automated Deployment Script (`deploy.sh`)
+- [x] Automated Deployment Script (`deploy.sh`)
     - Stops currently running application instance.
     - Copies latest JAR build to the deployment directory.
     - Starts the new application in the background.
-- [ ] Configure CORS
+- [x] Configure CORS
     - Resolve issues caused when the server and client have different Origin values.
     - Allow all origins.
     - Allow "simple" methods: GET, HEAD and POST.
     - Allow all headers.
     - Set max age to 1800 seconds (30 minutes).
-- [ ] Ensure stable network communication between server and client.
+- [x] Ensure stable network communication between server and client.
