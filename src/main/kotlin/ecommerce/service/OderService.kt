@@ -46,7 +46,7 @@ class OderService(
         paymentResponse: PaymentResponse,
         cart: Cart,
     ) {
-        if (paymentResponse.status == "succeeded") {
+        if (paymentResponse.status == PaymentStatus.SUCCESS.name) {
             newOrder.updateStatus(OrderStatus.PAID)
             paymentService.updatePaymentStatus(paymentResponse.id, PaymentStatus.SUCCESS)
             cartService.cartCheckOut(cart)
