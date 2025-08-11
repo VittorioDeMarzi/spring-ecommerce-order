@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import ecommerce.configuration.StripeProperties
 import ecommerce.dto.OrderRequest
 import ecommerce.dto.PaymentResponse
+import ecommerce.dto.StripePaymentResponse
 import ecommerce.exception.GlobalExceptionHandler
 import ecommerce.exception.StripeErrorInfo
 import ecommerce.exception.StripePaymentException
+import ecommerce.exception.StripeServerException
+import ecommerce.mapper.toPaymentResponse
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -51,11 +54,11 @@ class StripeClient(
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .body(body)
                     .retrieve()
-                    .toEntity(PaymentResponse::class.java)
+                    .toEntity(StripePaymentResponse::class.java)
 
             val responseBody = requireNotNull(response.body)
             logger.info("PaymentIntent created id={} status={}", responseBody.id, responseBody.status)
-            responseBody
+            responseBody.toPaymentResponse()
         } catch (e: RestClientResponseException) {
             val errorInfo = parseStripeError(e.responseBodyAsString)
             logger.error("Stripe error status={} code={} msg={}", e.statusCode, errorInfo.code, errorInfo.message)
@@ -65,7 +68,7 @@ class StripeClient(
             )
         } catch (e: Exception) {
             logger.error("Unexpected error calling Stripe: {}", e.message, e)
-            throw StripePaymentException("Unexpected Stripe error: ${e.message}", e)
+            throw StripeServerException("Unexpected Stripe error: ${e.message}", e)
         }
     }
 

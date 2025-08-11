@@ -63,8 +63,8 @@ class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedException::class)
     fun handleUnauthorizedException(ex: UnauthorizedException) = buildErrorResponse(HttpStatus.UNAUTHORIZED, ex)
 
-    @ExceptionHandler(StripePaymentException::class)
-    fun handleStripePaymentError(ex: StripePaymentException) = buildErrorResponse(HttpStatus.BAD_GATEWAY, ex)
+    @ExceptionHandler(StripeServerException::class)
+    fun handleStripeServerPaymentError(ex: StripePaymentException) = buildErrorResponse(HttpStatus.BAD_GATEWAY, ex)
 
     fun buildErrorResponse(
         status: HttpStatus,
