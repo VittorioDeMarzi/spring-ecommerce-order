@@ -4,6 +4,7 @@ import ecommerce.client.StripeClient
 import ecommerce.dto.OrderRequest
 import ecommerce.dto.PaymentResponse
 import ecommerce.enum.PaymentStatus
+import ecommerce.exception.StripePaymentException
 import ecommerce.model.Payment
 import ecommerce.repository.PaymentJpaRepository
 import ecommerce.repository.getByPaymentIntentIdOrThrow
@@ -22,19 +23,38 @@ class PaymentService(
         request: OrderRequest,
         amount: BigDecimal,
     ): PaymentResponse {
-        val paymentResponse =
-            stripeClient.createCheckoutSession(request, amount.multiply(BigDecimal.valueOf(100)).toInt())
-                ?: throw ServiceException("Payment Failed")
+        try {
+            val paymentResponse =
+                stripeClient.createCheckoutSession(request, amount.multiply(BigDecimal.valueOf(100)).toInt())
+                    ?: throw ServiceException("Payment Failed")
 
-        val payment =
-            Payment(
-                amount = amount,
-                currency = request.currency,
-                paymentMethod = request.paymentMethod,
-                paymentIntentId = paymentResponse.id,
-            )
-        paymentJpaRepository.save(payment)
-        return paymentResponse
+            val payment =
+                Payment(
+                    amount = amount,
+                    currency = request.currency,
+                    paymentMethod = request.paymentMethod,
+                    paymentIntentId = paymentResponse.id,
+                )
+            paymentJpaRepository.save(payment)
+            return paymentResponse
+        } catch (e: StripePaymentException) {
+            val paymentResponse =
+                PaymentResponse(
+                    id = "Not Available",
+                    amount = amount.toDouble(),
+                    status = PaymentStatus.FAILED.name,
+                )
+            val payment =
+                Payment(
+                    amount = amount,
+                    currency = request.currency,
+                    paymentMethod = request.paymentMethod,
+                    paymentIntentId = "Payment Intent Failed",
+                    status = PaymentStatus.FAILED,
+                )
+            paymentJpaRepository.save(payment)
+            return paymentResponse
+        }
     }
 
     fun updatePaymentStatus(

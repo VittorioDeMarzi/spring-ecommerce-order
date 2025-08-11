@@ -6,8 +6,8 @@ import ecommerce.dto.PaymentResponse
 import ecommerce.enum.OrderStatus
 import ecommerce.enum.PaymentStatus
 import ecommerce.exception.CartException
+import ecommerce.mapper.toOrderDto
 import ecommerce.mapper.toOrderItem
-import ecommerce.mapper.toOrderResponse
 import ecommerce.model.Cart
 import ecommerce.model.Order
 import ecommerce.repository.CartJpaRepository
@@ -36,7 +36,7 @@ class OderService(
         val paymentResponse = paymentService.createPaymentIntent(request, amount)
         val newOrder = placeOrder(cart, memberId, paymentResponse)
         updatePaymentAndOrderStatus(newOrder, paymentResponse, cart)
-        return newOrder.toOrderResponse()
+        return OrderResponse(newOrder.toOrderDto(), paymentResponse)
     }
 
     private fun updatePaymentAndOrderStatus(
@@ -50,7 +50,6 @@ class OderService(
             cart.cleanCart()
         } else {
             newOrder.updateStatus(OrderStatus.FAILED)
-            paymentService.updatePaymentStatus(paymentResponse.id, PaymentStatus.FAILED)
         }
 
         orderJpaRepository.save(newOrder)
