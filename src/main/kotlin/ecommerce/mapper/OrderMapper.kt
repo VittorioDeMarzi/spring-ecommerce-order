@@ -1,14 +1,14 @@
 package ecommerce.mapper
 
+import ecommerce.dto.OrderDto
 import ecommerce.dto.OrderItemResponse
-import ecommerce.dto.OrderResponse
 import ecommerce.model.Order
 import ecommerce.model.OrderItem
 
 class OrderMapper
 
-fun Order.toOrderResponse() =
-    OrderResponse(
+fun Order.toOrderDto() =
+    OrderDto(
         paymentIntentId = paymentIntentId ?: "Not Available",
         orderId = id,
         orderItems = orderItems.map { it.toOrderItemResponse() },
