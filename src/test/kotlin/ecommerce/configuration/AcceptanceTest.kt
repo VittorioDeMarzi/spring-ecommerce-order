@@ -11,7 +11,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@SpringBootTest
+@SpringBootTest(
+    properties = [
+        "spring.sql.init.mode=never",
+        "spring.jpa.hibernate.ddl-auto=none",
+    ],
+)
 @AutoConfigureMockMvc
 class AcceptanceTest {
     @Autowired

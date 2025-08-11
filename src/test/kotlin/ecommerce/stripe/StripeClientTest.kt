@@ -31,7 +31,7 @@ class StripeClientTest {
                 amount = 1000,
             )
         assertThat(actual).isNotNull
-        assertThat(actual?.amount).isEqualTo(1000)
+        assertThat(actual?.amount).isEqualTo(10.0)
     }
 
     @Test

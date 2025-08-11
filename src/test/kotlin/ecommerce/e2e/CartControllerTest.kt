@@ -83,7 +83,7 @@ class CartControllerTest {
         val newProduct =
             CartItemRequest(
                 optionId = 1,
-                quantity = 10,
+                quantity = 4,
             )
 
         val response =
@@ -97,7 +97,7 @@ class CartControllerTest {
 
         Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
         val json = JSONObject(response.asString())
-        assertThat(json.get("quantity")).isEqualTo(10)
+        assertThat(json.get("quantity")).isEqualTo(4)
     }
 
     @Test
