@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest(
     properties = [
@@ -16,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest
         "spring.jpa.hibernate.ddl-auto=none",
     ],
 )
+@ActiveProfiles("test")
 class StripeClientTest {
     @Autowired
     private lateinit var stripeClient: StripeClient
