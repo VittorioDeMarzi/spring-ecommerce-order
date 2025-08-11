@@ -1,7 +1,7 @@
 package ecommerce.dto
 
-data class PaymentResponse(
+data class StripePaymentResponse(
     val id: String,
-    val amount: Double,
+    val amount: Int,
     val status: String,
 )
