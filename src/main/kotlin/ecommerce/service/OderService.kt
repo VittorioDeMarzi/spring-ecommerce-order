@@ -23,6 +23,7 @@ class OderService(
     private val cartJpaRepository: CartJpaRepository,
     private val orderJpaRepository: OrderJpaRepository,
     private val paymentService: PaymentService,
+    private val cartService: CartService,
 ) {
     fun processOrder(
         memberId: Long,
@@ -32,6 +33,7 @@ class OderService(
         if (cart.cartProducts.isEmpty()) {
             throw CartException("Cart is empty")
         }
+        cart.cartProducts.forEach { it.option.checkAvailabilityInStock(it.quantity) }
         val amount = cart.totalAmount
         val paymentResponse = paymentService.createPaymentIntent(request, amount)
         val newOrder = placeOrder(cart, memberId, paymentResponse)
@@ -47,7 +49,7 @@ class OderService(
         if (paymentResponse.status == "succeeded") {
             newOrder.updateStatus(OrderStatus.PAID)
             paymentService.updatePaymentStatus(paymentResponse.id, PaymentStatus.SUCCESS)
-            cart.cleanCart()
+            cartService.cartCheckOut(cart)
         } else {
             newOrder.updateStatus(OrderStatus.FAILED)
         }

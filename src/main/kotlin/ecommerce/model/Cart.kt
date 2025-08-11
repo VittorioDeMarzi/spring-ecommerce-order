@@ -31,6 +31,7 @@ data class Cart(
         get() = cartProducts.sumOf { it.option.product!!.price.multiply(BigDecimal(it.quantity)) }
 
     fun addOrUpdateCartItem(cartItem: CartItem) {
+        cartItem.option.checkAvailabilityInStock(cartItem.quantity)
         val presentOption =
             cartProducts.firstOrNull { it.option.id == cartItem.option.id }
         when (presentOption) {

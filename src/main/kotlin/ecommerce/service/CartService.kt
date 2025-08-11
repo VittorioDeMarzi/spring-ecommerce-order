@@ -3,6 +3,7 @@ package ecommerce.service
 import ecommerce.dto.CartItemRequest
 import ecommerce.dto.CartItemResponse
 import ecommerce.mapper.toDto
+import ecommerce.model.Cart
 import ecommerce.model.CartHistory
 import ecommerce.model.CartItem
 import ecommerce.repository.CartHistoryJpaRepository
@@ -59,5 +60,10 @@ class CartService(
         val cart = cartJpaRepository.getByMemberId(memberId)
         cart.deleteCartProduct(optionId)
         cartJpaRepository.save(cart)
+    }
+
+    fun cartCheckOut(cart: Cart) {
+        cart.cartProducts.forEach { it.option.reduceOptionQuantity(it.quantity) }
+        cart.cleanCart()
     }
 }
