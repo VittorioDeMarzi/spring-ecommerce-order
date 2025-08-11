@@ -43,6 +43,7 @@ class PaymentService(
                     id = "Not Available",
                     amount = amount.toDouble(),
                     status = PaymentStatus.FAILED.name,
+                    errorMessage = e.message,
                 )
             val payment =
                 Payment(
