@@ -35,8 +35,14 @@ class Option(
 
     fun reduceOptionQuantity(value: Int) {
         if (quantity < value) {
-            throw InsufficientQuantityException("Insufficient quantity: $quantity")
+            throw InsufficientQuantityException("Insufficient quantity of ${product!!.name}. Items available in stock: $quantity")
         }
         quantity -= value
+    }
+
+    fun checkAvailabilityInStock(value: Int) {
+        if (quantity < value) {
+            throw InsufficientQuantityException("Insufficient quantity of ${product!!.name}. Items available in stock: $quantity")
+        }
     }
 }
