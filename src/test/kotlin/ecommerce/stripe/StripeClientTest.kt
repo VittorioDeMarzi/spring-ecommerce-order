@@ -23,7 +23,7 @@ class StripeClientTest {
     private lateinit var stripeClient: StripeClient
 
     @Test
-    fun test1() {
+    fun `should create a payment intent with the right amount`() {
         val actual =
             stripeClient.createCheckoutSession(
                 OrderRequest(
