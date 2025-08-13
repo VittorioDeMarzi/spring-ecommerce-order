@@ -27,7 +27,7 @@ class StripeClient(
 
     fun createCheckoutSession(
         req: OrderRequest,
-        amount: Int,
+        amount: Long,
     ): PaymentResponse? {
         val body =
             listOf(

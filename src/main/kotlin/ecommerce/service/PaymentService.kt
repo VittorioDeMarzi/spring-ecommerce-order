@@ -8,10 +8,11 @@ import ecommerce.exception.StripePaymentException
 import ecommerce.model.Payment
 import ecommerce.repository.PaymentJpaRepository
 import ecommerce.repository.getByPaymentIntentIdOrThrow
-import jakarta.transaction.Transactional
 import org.hibernate.service.spi.ServiceException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Transactional
 @Service
@@ -24,8 +25,13 @@ class PaymentService(
         amount: BigDecimal,
     ): PaymentResponse {
         try {
+            val amountInCents =
+                amount
+                    .multiply(BigDecimal.valueOf(100))
+                    .setScale(0, RoundingMode.HALF_UP)
+                    .toLong()
             val paymentResponse =
-                stripeClient.createCheckoutSession(request, amount.multiply(BigDecimal.valueOf(100)).toInt())
+                stripeClient.createCheckoutSession(request, amountInCents)
                     ?: throw ServiceException("Payment Failed")
 
             val payment =
